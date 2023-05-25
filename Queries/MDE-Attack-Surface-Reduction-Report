@@ -1,0 +1,10 @@
+//name: Attack Surface Reduction Report
+//description:
+//This query will provide a report with all Attack Surface Reduction Rules that were blocked.
+//To find all ASR rules that triggered in audit mode switch out the "Blocked" for "Audited" in the second query line below.
+//This query can also be used to create a custom detection rule to create an informational alert when a specific ASR rule was triggered.
+
+DeviceEvents
+| where ActionType startswith "Asr" and ActionType endswith "Blocked"
+| project Timestamp, ReportId, DeviceId, DeviceName, ActionType, FolderPath, FileName, InitiatingProcessSHA1, InitiatingProcess = strcat(InitiatingProcessFolderPath, "\\" , InitiatingProcessFileName)
+| sort by Timestamp desc 
