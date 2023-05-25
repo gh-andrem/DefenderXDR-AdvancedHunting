@@ -1,4 +1,4 @@
-//name: Defender for Antivirus (MDAV) Scan Status
+//name: Endpoint Health Status Report (customized)
 //description:
 //This query will provide a report of many of the best practice configurations for Defender for Endpoint (MDE) for Windows, Linux and macOS devices.
 //Any tests which are reporting "BAD" as a result imply that the associated capability is not configured per best practice recommendation.
