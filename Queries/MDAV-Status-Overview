@@ -2,6 +2,7 @@
 //description:
 //This query will provide a report of ***Windows*** devices and their installed MDAV versions (signature, engine, platform) as well as MDAV status (active, passive, EDR blocked, ...).
 //It can be used for getting an overview of onboarding issues (e.g. with version 4.18.2001.10, devices in EDR blocked mode, ...) and to track the migration from a 3rd-party solution to MDE.
+//Get the current MDAV signature, engine and platform versions at https://www.microsoft.com/security/encyclopedia/adlpackages.aspx?action=info
 
 let avmodetable = DeviceTvmSecureConfigurationAssessment
 | where ConfigurationId == "scid-2010" and isnotnull(Context)
