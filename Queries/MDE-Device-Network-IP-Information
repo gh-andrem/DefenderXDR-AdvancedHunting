@@ -1,0 +1,10 @@
+//name: Device Network/IP Information 
+//description:
+//This query will provide a report with a device's network and IP information, e.g. network adapter (ethernet, wifi), firewall profile (private, public, domain), DNS server, IP address, gateway. 
+//This query is helpful in combination with Device Discovery to discover rogue/shadow networks.
+//It is recommended to export the list to Excel and filter the data there (unless you want to do that here with KQL).
+
+DeviceNetworkInfo
+| where isnotempty(ConnectedNetworks)
+//| where DeviceName == "ENTER YOUR DEVICE NAME"
+| project Timestamp, DeviceName, MacAddress, NetworkAdapterType, ConnectedNetworks, DnsAddresses, IPv4Dhcp, DefaultGateways, IPAddresses
