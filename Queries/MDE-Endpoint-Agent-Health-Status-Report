@@ -31,6 +31,7 @@ let configurationIDs = dynamic([
         "scid-6094"
     ]);
 DeviceTvmSecureConfigurationAssessment
+| where Timestamp > ago(7d)
 | where ConfigurationId in (configurationIDs)
 | extend Test = case(
     ConfigurationId == "scid-2000", "SensorEnabled",
