@@ -1,0 +1,24 @@
+//name: Defender for Antivirus (MDAV) Status Overview (Win, macOS, Linux)
+//description:
+//This query will provide a report of Windows, macOS and Linux devices and their installed MDAV versions (signature, engine, platform) as well as MDAV status (active, passive, EDR blocked, unknown ... Windows only).
+//It can be used for getting an overview of onboarding issues (e.g. with version 4.18.2001.10, devices in EDR blocked mode, ...) and to track the migration from a 3rd-party solution to MDE.
+//Get the current MDAV signature, engine and platform versions at https://www.microsoft.com/security/encyclopedia/adlpackages.aspx?action=info
+
+let avmodetable = DeviceTvmSecureConfigurationAssessment
+| where ConfigurationId == "scid-2010" and isnotempty(Context)
+| extend avdata=parsejson(Context)
+| extend AVMode = iif(tostring(avdata[0][0]) == '0', 'Active' , iif(tostring(avdata[0][0]) == '1', 'Passive' ,iif(tostring(avdata[0][0]) == '4', 'EDR Blocked' ,'Unknown')))
+//| where AVMode != "EDR Blocked"
+| project DeviceId, AVMode;
+DeviceTvmSecureConfigurationAssessment
+| where ConfigurationId has_any ("scid-6095","scid-5095","scid-2011") and Context != "[]"
+| extend avdata=parsejson(Context)
+| extend AVSigVersion = tostring(avdata[0][0])
+| extend AVEngineVersion = tostring(avdata[0][1])
+| extend AVSigLastUpdateTime = tostring(avdata[0][2])
+| extend AVProductVersion = tostring(avdata[0][3])
+//| where AVProductVersion has_any ("4.18.1909.6", "4.18.1911.3", "4.18.2001.7")
+| project Timestamp, DeviceId, DeviceName, OSPlatform, AVSigVersion, AVEngineVersion, AVProductVersion, AVSigLastUpdateTime
+| join avmodetable on DeviceId
+| project-away DeviceId1
+//| count
