@@ -7,5 +7,6 @@
 DeviceEvents
 | where ActionType startswith "Asr" and ActionType endswith "Blocked"
 | join kind=inner (DeviceInfo | distinct DeviceId, OSPlatform) on DeviceId
+//| where OSPlatform contains "Server"
 | project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, ActionType, FolderPath, FileName, InitiatingProcessSHA1, InitiatingProcess = strcat(InitiatingProcessFolderPath, "\\" , InitiatingProcessFileName)
 | sort by Timestamp desc 
