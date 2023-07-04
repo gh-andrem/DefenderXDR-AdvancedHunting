@@ -1,0 +1,10 @@
+//name: Attack Surface Reduction Report (Count)
+//description:
+//This query shows all audited or blocked Attack Surface Reduction Rules, the initiating process, protected folder and the respective blocked count.
+//To find all ASR rules that triggered in audit mode switch out "Blocked" for "Audited" in the second query line below.
+
+DeviceEvents
+| where ActionType startswith "Asr" and ActionType endswith "Blocked"
+| project Timestamp, ReportId, DeviceId, DeviceName, ActionType, FolderPath, FileName, InitiatingProcessSHA1, InitiatingProcess = strcat(InitiatingProcessFolderPath, "\\" , InitiatingProcessFileName)
+| summarize BlockedCount = count() by ActionType, FolderPath, FileName, InitiatingProcess
+| sort by BlockedCount desc 
