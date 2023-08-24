@@ -7,3 +7,4 @@
 AADSignInEventsBeta
 | where SessionId == "xxxx"
 | project Timestamp, EndpointCall, UserAgent, IPAddress, Application, ErrorCode, Country, City, LogonType
+| sort by Timestamp asc
