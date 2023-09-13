@@ -1,0 +1,14 @@
+//name: Device Discovery Report
+//description:
+//This query will provide a report with all devices that can be onboarded to MDE and that were discovered in the environment by the
+//device discovery feature of MDE. 
+//It joins the onboarding status from the DeviceInfo table with the network information from the DeviceNetworkInfo table.
+//It's also possible to detect issues around network segmentation in your environment when devices (that are not onboarded to MDE) are found
+//by device discovery through devices that are onboarded to MDE, e.g. a lab or high sensitive environment that should not have access to prod.
+
+DeviceInfo 
+| where OnboardingStatus == "Can be onboarded"
+| join (DeviceNetworkInfo | distinct DeviceId, MacAddress, ConnectedNetworks, IPAddresses) on DeviceId
+//| where isnotempty(ConnectedNetworks)
+| project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, MacAddress, ConnectedNetworks, IPAddresses
+| sort by Timestamp desc
