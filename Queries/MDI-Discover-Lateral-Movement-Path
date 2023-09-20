@@ -1,0 +1,8 @@
+//name: LMP discovery using advanced hunting
+//description:
+//To proactively discover lateral movement path activities.
+//Source: https://learn.microsoft.com/en-us/defender-for-identity/understand-lateral-movement-paths
+
+IdentityDirectoryEvents
+| where ActionType == "Potential lateral movement path identified"
+| project Timestamp, ActionType, Application, AccountName, AccountDomain, AccountSid, AccountDisplayName, DeviceName, AdditionalFields
