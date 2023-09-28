@@ -1,0 +1,23 @@
+//name: MDI - LDAP Cleartext Discovery
+//description:
+//This query will find all processes and identities that try to authenticate in cleartext using LDAP.
+
+IdentityLogonEvents
+| where Timestamp > ago(7d)
+| where LogonType == "LDAP cleartext"
+| project LogonTime = Timestamp, DeviceName, AccountName, Application, LogonType
+| join kind=inner (
+DeviceNetworkEvents // Add process information from MDE
+| where Timestamp > ago(7d)
+| where ActionType == "ConnectionSuccess"
+| where RemotePort == "389"
+| project NetworkConnectionTime = Timestamp, DeviceName, AccountName = InitiatingProcessAccountName, InitiatingProcessFileName, InitiatingProcessCommandLine
+) on DeviceName, AccountName
+| where LogonTime - NetworkConnectionTime between (-5m .. 5m)
+| join kind=inner ( // Extend results with information from IdentityInfo
+IdentityInfo
+| where Timestamp > ago(7d)
+| project AccountName = tolower(AccountName), JobTitle, Manager, tostring(Tags), SourceProvider
+) on AccountName
+| distinct AccountName, LogonType, LogonTime, DeviceName, JobTitle, InitiatingProcessFileName, Manager, Tags
+| sort by LogonTime desc
