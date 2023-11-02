@@ -1,0 +1,8 @@
+//name: Defender for Office 365/Exchange - Count unique file types/extensions
+//description:
+//This query returns all unique file types/extensions that were received via email in a specific timeframe.
+//Useful to determine the impact of implementing a common attachment filter (MDO anti-malware policy)
+
+EmailAttachmentInfo
+| summarize UniqueFiles=dcount(FileName) by FileType
+| sort by UniqueFiles desc
