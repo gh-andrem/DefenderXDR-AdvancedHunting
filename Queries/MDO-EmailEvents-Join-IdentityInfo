@@ -1,0 +1,10 @@
+//name: Defender for Office 365/Exchange - EmailEvents table joined to IdentityInfo
+//description:
+//WORK IN PROGRESS
+//This query returns all unique emails received by any recipients in your organization whose accounts were created within the last 30 days.
+//For testing  you can uncomment line 7 to filter for a specific user. Adjust number in line 9 (CreatedDateTime) to your needs.
+
+EmailEvents
+//| where RecipientEmailAddress contains "ENTER UPN"
+| join kind=inner (IdentityInfo | distinct AccountUpn, CreatedDateTime | where CreatedDateTime > ago(30d)) on $left.RecipientEmailAddress == $right.AccountUpn
+| project Timestamp, NetworkMessageId, InternetMessageId, SenderMailFromAddress, SenderFromAddress, SenderDisplayName, RecipientEmailAddress, RecipientObjectId, Subject, ReportId, CreatedDateTime
