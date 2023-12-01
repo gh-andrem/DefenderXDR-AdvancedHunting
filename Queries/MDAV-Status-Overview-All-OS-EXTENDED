@@ -1,7 +1,7 @@
 //name: Defender for Antivirus (MDAV) Status Overview (Win, macOS, Linux) - POWER QUERY
 //description:
 //This query will provide an extensive report of Windows, macOS and Linux devices (OS platform, OS version, OS architecture, device join type), their installed MDAV versions (signature, engine, platform),
-//MDAV status (active, passive, EDR blocked, unknown ... Windows only) as well as the MDE onboarding status.
+//MDAV status (active, passive, EDR blocked, unknown ... Windows only).
 //It can be used for getting an overview of onboarding issues (e.g. with version 4.18.2001.10, devices in EDR blocked mode, ...) and to track the migration from a 3rd-party solution to MDE.
 //Get the current MDAV signature, engine and platform versions at https://www.microsoft.com/security/encyclopedia/adlpackages.aspx?action=info
 
@@ -20,6 +20,6 @@ DeviceTvmSecureConfigurationAssessment
 | extend AVProductVersion = tostring(avdata[0][3])
 //| where AVProductVersion has_any ("4.18.1909.6", "4.18.1911.3", "4.18.2001.7")
 | join (DeviceInfo | summarize arg_max(Timestamp, *) by DeviceId) on DeviceId
-| project LastSeen = Timestamp1, DeviceId, DeviceName, DeviceType, RegistryDeviceTag, OSPlatform, OSVersionInfo, OSBuild ,OSArchitecture, MDAVSignatureVersion = AVSigVersion, MDAVEngineVersion = AVEngineVersion, MDAVPlatformVersion = AVProductVersion, MDAVSignLastUpdate = AVSigLastUpdateTime, JoinType, OnboardingStatus
+| project LastSeen = Timestamp1, DeviceId, DeviceName, DeviceType, RegistryDeviceTag, OSPlatform, OSVersionInfo, OSBuild ,OSArchitecture, MDAVSignatureVersion = AVSigVersion, MDAVEngineVersion = AVEngineVersion, MDAVPlatformVersion = AVProductVersion, MDAVSignLastUpdate = AVSigLastUpdateTime, JoinType
 | join avmodetable on DeviceId
 | project-away DeviceId1
