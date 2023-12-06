@@ -1,0 +1,20 @@
+//name: Attack Surface Reduction Status Report
+//description:
+//This query will provide a report with all blocked or audited Attack Surface Reduction rules.
+//Source: https://github.com/alexverboon/Hunting-Queries-Detection-Rules/blob/main/Defender%20For%20Endpoint/MDE-ASR%20State.md
+
+DeviceInfo
+| where OnboardingStatus == 'Onboarded'
+| where isnotempty(OSPlatform)
+| summarize arg_max(Timestamp, *) by DeviceName
+| where OSPlatform startswith "Windows"
+| project DeviceId, DeviceName, OSPlatform
+| join kind=leftouter (
+    DeviceTvmInfoGathering
+    | extend AF = parse_json(AdditionalFields)
+    | extend ASR1 = parse_json(AdditionalFields.AsrConfigurationStates)
+    | project DeviceName, ASR1
+    | evaluate bag_unpack(ASR1)
+    )
+    on $left.DeviceName == $right.DeviceName
+    | project-away DeviceName1
