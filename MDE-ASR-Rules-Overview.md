@@ -16,5 +16,6 @@
 | Block process creations originating from PSExec and WMI commands                                  | d1e49aac-8f56-4280-b9ba-993a6d77406c | AsrPsexecWmiChildProcessAudited        | AsrPsexecWmiChildProcessBlocked        |
 | Block untrusted and unsigned processes that run from USB                                          | b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4 | AsrUntrustedUsbProcessAudited          | AsrUntrustedUsbProcessBlocked          |
 | Use advanced protection against ransomware                                                        | c1db55ab-c21a-4637-bb3f-a12568109d35 | AsrRansomwareAudited                   | AsrRansomwareBlocked                   |
+| Block Webshell creation for Servers                                                               | a8f5898e-1dc8-49a9-9878-85004b8a61e6 | xyz                                    | xyz                                    |
 
 Source: https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules-reference?view=o365-worldwide#per-rule-descriptions
