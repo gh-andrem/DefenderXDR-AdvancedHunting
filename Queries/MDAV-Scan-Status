@@ -1,17 +1,17 @@
 //name: Defender for Antivirus (MDAV) Scan Status
 //description:
-//This query will provide a report with devices and their antivirus scan status, e.g. a full scan was completed, cancelled.
+//This query will provide a report with devices and their antivirus scan status, e.g. a full scan was completed or cancelled.
 //This query can also be used to create a custom detection rule to create an informational alert when a manually triggered quick or full scan was completed.
 //You can uncomment line 12 and add the device name that you're interested in.
-//Colum StartedBy contains the following values:
-//NETWORK SERVICE – Scheduled scan
-//SYSTEM- Triggered manually via cloud, e.g. Intune
-//USER – Triggered manually locally
+//Column TriggeredBy contains the following values:
+//NETWORK SERVICE – The scan was a scheduled scan, e.g. GPO, Intune
+//SYSTEM - The scan was triggered manually via the cloud, e.g. Defender XDR, Intune
+//USER – The scan was triggered or cancelled locally by that specific user
 
 DeviceEvents
 //| where DeviceName contains "ENTER DEVICE NAME HERE"
 | where ActionType has_any ("AntivirusScan", "AntivirusScanCompleted", "AntivirusScanCancelled")
 | extend AdditionalFields = parse_json(AdditionalFields)
 | extend ScanType = AdditionalFields.["ScanTypeIndex"], StartedBy= AdditionalFields.["User"]
-| project Timestamp, DeviceId, ReportId, DeviceName, ActionType, ScanType, StartedBy
+| project Timestamp, DeviceId, ReportId, DeviceName, ActionType, ScanType, TriggeredBy = StartedBy
 | sort by Timestamp desc
