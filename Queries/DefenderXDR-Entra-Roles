@@ -1,0 +1,8 @@
+//name: Entra ID role assignment summary
+//description:
+//This query will provide a report of all users that have an Entra ID role assigned.
+
+IdentityInfo
+| where IsAccountEnabled and isnotempty(AssignedRoles) and AssignedRoles != "[]"
+| summarize arg_max(Timestamp, *) by AccountObjectId, OnPremSid, CloudSid
+| project CreatedDateTime, AccountDisplayName, AccountUpn, AssignedRoles
