@@ -1,0 +1,10 @@
+//name: Search for Entra ID activity by session Id
+//description:
+//This query will find all cloud activity (Entra sign-in logs) related to a session Id, e.g.
+//to find out what activities were performed when a user session was compromised, did the IP change, ...
+//You can find the session Id by either searching for it via querying the AADSignInEventsBeta table or in an Defender XDR incident (Evidence & Response > Cloud Logon Sessions).
+
+AADSignInEventsBeta
+| where SessionId == "xxxx"
+| project Timestamp, EndpointCall, UserAgent, IPAddress, Application, ErrorCode, Country, City, LogonType
+| sort by Timestamp asc
