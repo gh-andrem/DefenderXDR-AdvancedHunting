@@ -1,4 +1,4 @@
-# Defender XDR Advanced Hunting Queries (MDE, MDAV, Device Discovery, SmartScreen, Network Protection, Device Health)
+# Defender XDR Advanced Hunting Queries
 
 ## Overview of available queries
 - MDE Attack Surface Reduction Rules Report
@@ -10,4 +10,5 @@
 - MDE Threat and Vulnerability Management (TVM) SCID Overview
 - MDAV Scan Status
 - MDAV Status Overview
-- To be continued
+- SmartScreen
+- Network Protection
