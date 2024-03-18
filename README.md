@@ -1,8 +1,7 @@
-# M365D-AdvancedHunting
-M365 Defender Advanced Hunting Queries (MDE, MDAV, Device Discovery)
+# Defender XDR Advanced Hunting Queries (MDE, MDAV, Device Discovery, SmartScreen, Network Protection, Device Health)
 
 ## Overview of available queries
-- MDE Attack Surface Reduction Report
+- MDE Attack Surface Reduction Rules Report
 - MDE Controlled Folder Access Report
 - MDE Device Control Events
 - MDE Device Network and IP Information Report
