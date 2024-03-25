@@ -1,0 +1,20 @@
+//name: User Access Administrator Elevation
+//description:
+//This query returns entries when a global administrator checked the box in Entra ID (Properties > Access management for Azure resources > Yes) to see all
+//Azure subscriptions and management groups in the tenant.
+//This query can be used in Log Analytics workspace to created an alert via Az Monitor.
+//Prerequesite: Azure is connected to MDCA (Defender XDR portal > Settings > Cloud apps > App Connectors > Microsoft Azure).
+//It is also possible to create a custom policy in MDCA which will create an alert/incident in the Defender XDR portal:
+//Repeated activity
+//Min repeated activities: 2
+//Within timeframe: 1
+//In a single app
+//Count only unique target files and folders
+//Action type equals `ElevateAccess Microsoft.Authorization`
+//App equals `Microsoft Azure, Microsoft Intune`
+
+CloudAppEvents
+| where ApplicationId == '12260' and Application == 'Microsoft Azure'
+| where ActionType has 'ElevateAccess Microsoft.Authorization'
+| where RawEventData.properties contains "statusCode"
+| project TimeGenerated, IPAddress, CountryCode, ActivityObjects, RawEventData.authorization, RawEventData.operationName, RawEventData.properties
