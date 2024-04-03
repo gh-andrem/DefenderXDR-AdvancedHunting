@@ -1,0 +1,30 @@
+//name: Defender for Antivirus (MDAV) Status Overview (Win, macOS, Linux) - More Information
+//description:
+//This query will provide an extensive report of Windows, macOS and Linux devices, their installed MDAV versions (signature, engine, platform) and MDAV status
+//(active, passive, EDR blocked, unknown ... Windows only). Use at your discretion as information might not be correct - use the MDAV-Status-Overview-All-OS-EXTENDED instead. 
+//It can be used for getting an overview of onboarding issues (e.g. with version 4.18.2001.10, devices in EDR blocked mode, ...) and to track the migration from a 3rd-party solution to MDE.
+//Get the current MDAV signature, engine and platform versions at https://www.microsoft.com/security/encyclopedia/adlpackages.aspx?action=info
+
+DeviceTvmInfoGathering
+| extend avdata=parsejson(AdditionalFields)
+| extend AvMode = iif(tostring(avdata.AvMode) == '0', 'Active' , iif(tostring(avdata.AvMode) == '1', 'Passive' ,iif(tostring(avdata.AvMode) == '4', 'EDR Blocked' ,'Unknown')))
+| extend AvSignatureVersion = tostring(avdata.AvSignatureVersion)
+| extend AvEngineVersion = tostring(avdata.AvEngineVersion)
+| extend AvPlatformVersion = tostring(avdata.AvPlatformVersion)
+| extend AvModeDataRefreshTime = todatetime(avdata.AvModeDataRefreshTime)
+| extend AvEngineUpdateTime = todatetime(avdata.AvEngineUpdateTime)
+| extend AvSignatureUpdateTime = todatetime(avdata.AvSignatureUpdateTime)
+| extend AvPlatformUpdateTime = todatetime(avdata.AvPlatformUpdateTime)
+| extend AvIsSignatureUptoDate = tostring(avdata.AvIsSignatureUptoDate)
+| extend AvIsEngineUptodate = tostring(avdata.AvIsEngineUptodate)
+| extend AvIsPlatformUptodate = tostring(avdata.AvIsPlatformUptodate)
+| extend AvSignaturePublishTime = todatetime(avdata.AvSignaturePublishTime)
+| extend AvPlatformPublishTime = todatetime(avdata.AvPlatformPublishTime)
+| extend AvEnginePublishTime = todatetime(avdata.AvEnginePublishTime)
+| extend AvSignatureDataRefreshTime = todatetime(avdata.AvSignatureDataRefreshTime)
+| extend EBPFStatus = tostring(avdata.EBPFStatus)
+| extend IsWindowsLtscVersionRunning = tostring(avdata.IsWindowsLtscVersionRunning)
+| extend WdavorHeartbeatEventType = tostring(avdata.WdavorHeartbeatEventType)
+| join (DeviceInfo | summarize arg_max(Timestamp, *) by DeviceId) on DeviceId
+| project LastSeen = Timestamp1, DeviceId, DeviceName, DeviceType, RegistryDeviceTag, OSPlatform, OSVersionInfo, OSBuild ,OSArchitecture, AvSignatureVersion, AvEngineVersion, AvPlatformVersion, AvSignatureUpdateTime, AvEngineUpdateTime, AvPlatformUpdateTime, JoinType, AvMode, SensorHealthState, EBPFStatus, IsWindowsLtscVersionRunning
+| sort by DeviceName asc
