@@ -1,0 +1,8 @@
+//name: Find WSL instances
+//description:
+//This query will find all hosts where WSL is installed on.
+
+DeviceTvmSoftwareInventory
+| where SoftwareName contains "windows_subsystem_for_linux"
+| summarize Devices = makeset(DeviceName) by SoftwareName, SoftwareVersion
+| project SoftwareName, SoftwareVersion, Devices
