@@ -1,0 +1,12 @@
+//name: Defender for Antivirus (MDAV) Scan Status - Failed Full Scans
+//description:
+//The reports and device dashboard that can be retrieved through the Defender XDR portal only return the status of the last scan.
+//This query will return a report of all devices where a full scan was never successful.
+
+DeviceEvents
+| where ActionType has_any ("AntivirusScanCompleted", "AntivirusScanCancelled")
+| extend AdditionalFields = parse_json(AdditionalFields)
+| extend ScanType = AdditionalFields.["ScanTypeIndex"]
+| where ScanType == "Full"
+| summarize make_set(ActionType) by DeviceId, DeviceName
+| where set_ActionType !has ("AntivirusScanCompleted")
