@@ -5,7 +5,9 @@
 //This query can also be used to create a custom detection rule to create an informational alert when a specific ASR rule was triggered.
 
 DeviceEvents
+| where Timestamp > ago(30d)
 | where ActionType startswith "Asr" and ActionType endswith "Audited"
+// where ActionType == "enter-ASR-rule-to-evaluate"
 | join kind=inner (DeviceInfo | distinct DeviceId, OSPlatform) on DeviceId
 //| where OSPlatform contains "Server"
 | project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, ActionType, FolderPath, FileName, InitiatingProcessSHA1, InitiatingProcess = strcat(InitiatingProcessFolderPath, "\\" , InitiatingProcessFileName)
