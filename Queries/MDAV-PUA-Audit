@@ -1,0 +1,10 @@
+//name: Defender for Antivirus (MDAV) - PUA Audit Detections
+//description:
+//This query returns all potentially unwanted app (PUA) detections when PUA detection is in audit mode
+
+DeviceEvents
+| where ActionType == "OtherAlertRelatedActivity"
+| extend x = parse_json(AdditionalFields)
+| project Timestamp, DeviceName, FolderPath, FileName, SHA256, ThreatName = tostring(x.Description)
+| where ThreatName contains 'PUA:'
+| sort by Timestamp desc
