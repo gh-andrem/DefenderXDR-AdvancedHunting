@@ -4,6 +4,7 @@
 //This query can also be used to create a custom detection rule that creatse an informational alert when a Controlled Folder Access action was triggered.
 
 DeviceEvents
+| where Timestamp > ago(30d)
 | where ActionType has_any ('ControlledFolderAccessViolationAudited', 'ControlledFolderAccessViolationBlocked')
 | join kind=inner (DeviceInfo | distinct DeviceId, OSPlatform) on DeviceId
 //| where OSPlatform contains "Server"
