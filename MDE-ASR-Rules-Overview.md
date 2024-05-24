@@ -18,7 +18,7 @@
 | Use advanced protection against ransomware                                                                                  | c1db55ab-c21a-4637-bb3f-a12568109d35 | AsrRansomwareAudited                   | AsrRansomwareBlocked                   |
 | Block Webshell creation for Servers                                                                                         | a8f5898e-1dc8-49a9-9878-85004b8a61e6 | Unknown                                | Unknown                                |
 | PREVIEW - Block rebooting machine in Safe Mode                                                                              | 33ddedf1-c6e0-47cb-833e-de6133960387 | Unknown                                | Unknown                                |
-| PREVIEW - Block use of copied or impersonated system tools                                                                  | a8f5898e-1dc8-49a9-9878-85004b8a61e6 | Unknown                                | Unknown                                |
+| PREVIEW - Block use of copied or impersonated system tools                                                                  | c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb | AsrCustomRuleAudited                   | Unknown                                |
 
 
 Source: https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules-reference?view=o365-worldwide#per-rule-descriptions
