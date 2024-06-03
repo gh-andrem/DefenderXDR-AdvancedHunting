@@ -1,0 +1,30 @@
+This is a collection of queries from various sources that I was unable to find on GitHub.
+I thought it might be best to add them so others can benefit from them. If you are the owner and would like me to remove them please contact me.
+
+---
+
+// **1**
+// Shows user activity of apps that are connected to Defender for Cloud Apps over last 7 days.
+// Query was provided during webcast (https://youtu.be/DnQ_nrVT7FM)
+
+let start_date = now(-7d);
+let end_date = now();
+let user = "ENTER NAME"; // AccountDisplayName of user
+CloudAppEvents
+| where ActionType != @"Search"
+| where Timestamp between (start_date .. end_date)
+| where AccountDisplayName contains user
+| summarize ActivityCount = count() by AccountObjectId, ActionType, ObjectName, Application
+| sort by ActivityCount desc 
+
+---
+
+// **2**
+// Report of users and in specific privileged groups (on-prem)
+// Query was provided during webcast (https://youtu.be/DnQ_nrVT7FM)
+
+ExposureGraphEdges
+| where SourceNodeLabel == "user"
+| where EdgeLabel  == "member of"
+| where TargetNodeName has_any ("Domain Admins", "Enterprise Admins")
+| sort by SourceNodeName asc
