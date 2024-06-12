@@ -2,6 +2,7 @@
 //description:
 //The reports and device dashboard that can be retrieved through the Defender XDR portal only return the status of the last scan.
 //This query will return a report of all devices where a full scan was never successful.
+//You might see an error in the query for `!has`. This can be disregarded as the query will return results if there are any.  
 
 DeviceEvents
 | where ActionType has_any ("AntivirusScanCompleted", "AntivirusScanCancelled")
