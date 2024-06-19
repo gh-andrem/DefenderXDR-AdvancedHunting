@@ -1,0 +1,8 @@
+//name: Defender for Endpoint (MDE) - Streamlined Connectivity Check
+//description:
+//This query will check if devices are using the new streamlined connectivity URLs as the DeviceInfo table (column ConnectivityType) currently
+//does not return the correct information. Feel free to further manipulate this query, e.g. to return results where ActionType == "ConnectionFailed"
+
+DeviceNetworkEvents
+| where RemoteUrl has "endpoint.security.microsoft.com"
+| project Timestamp, DeviceId, DeviceName, RemoteUrl, RemoteIP, ActionType, InitiatingProcessParentFileName
