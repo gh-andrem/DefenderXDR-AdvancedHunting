@@ -7,8 +7,9 @@
 //by device discovery through devices that are onboarded to MDE, e.g. a lab or high sensitive environment that should not have access to prod.
 
 DeviceInfo 
-| where OnboardingStatus == "Can be onboarded"
+//| where OnboardingStatus == "Can be onboarded"
 | join (DeviceNetworkInfo | distinct DeviceId, MacAddress, ConnectedNetworks, IPAddresses) on DeviceId
 //| where isnotempty(ConnectedNetworks)
+//| where ConnectedNetworks contains "ENTER YOUR NETWORK NAME"
 | project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, MacAddress, ConnectedNetworks, IPAddresses
 | sort by Timestamp desc
