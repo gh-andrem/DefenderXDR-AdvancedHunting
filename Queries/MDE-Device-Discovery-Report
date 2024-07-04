@@ -9,9 +9,8 @@
 DeviceInfo 
 //| where OnboardingStatus == "Can be onboarded"
 | join (DeviceNetworkInfo | distinct DeviceId, MacAddress, ConnectedNetworks, IPAddresses) on DeviceId
-| where isnotempty(ConnectedNetworks)
-| extend d = todynamic(ConnectedNetworks)
-| extend NetworkName = d[0].Name
+//| where isnotempty(ConnectedNetworks)
+| extend NetworkName = todynamic(ConnectedNetworks)[0].Name
 //| where NetworkName contains "ENTER YOUR NETWORK NAME"
 | project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, MacAddress, IPAddresses, NetworkName
 | sort by Timestamp desc
