@@ -13,7 +13,7 @@
 | Block executable files from running unless they meet a prevalence, age, or trusted list criterion                           | 01443614-cd74-433a-b99e-2ecdc07bfc25 | AsrUntrustedExecutableAudited          | AsrUntrustedExecutableBlocked          |
 | Block execution of potentially obfuscated scripts                                                                           | 5beb7efe-fd9a-4556-801d-275e5ffc04cc | AsrObfuscatedScriptAudited             | AsrObfuscatedScriptBlocked             |
 | Block persistence through WMI event subscription **ENABLE by default**                                                      | e6db77e5-3df2-4cf1-b95a-636979351e5b | AsrPersistenceThroughWmiAudited        | AsrPersistenceThroughWmiBlocked        |
-| Block process creations originating from PSExec and WMI commands                                                            | d1e49aac-8f56-4280-b9ba-993a6d77406c | AsrPsexecWmiChildProcessAudited        | AsrPsexecWmiChildProcessBlocked        |
+| Block process creations originating from PSExec and WMI commands **DO NOT ENABLE IF USING SCCM ... see (1) below**          | d1e49aac-8f56-4280-b9ba-993a6d77406c | AsrPsexecWmiChildProcessAudited        | AsrPsexecWmiChildProcessBlocked        |
 | Block untrusted and unsigned processes that run from USB                                                                    | b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4 | AsrUntrustedUsbProcessAudited          | AsrUntrustedUsbProcessBlocked          |
 | Use advanced protection against ransomware                                                                                  | c1db55ab-c21a-4637-bb3f-a12568109d35 | AsrRansomwareAudited                   | AsrRansomwareBlocked                   |
 | Block Webshell creation for Servers                                                                                         | a8f5898e-1dc8-49a9-9878-85004b8a61e6 | Unknown                                | Unknown                                |
@@ -21,4 +21,7 @@
 | PREVIEW - Block use of copied or impersonated system tools                                                                  | c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb | AsrCustomRuleAudited                   | Unknown                                |
 
 
-Source: https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules-reference?view=o365-worldwide#per-rule-descriptions
+**Source**
+https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules-reference?view=o365-worldwide#per-rule-descriptions
+
+(1) https://learn.microsoft.com/en-us/defender-endpoint/attack-surface-reduction-rules-reference?view=o365-worldwide#block-process-creations-originating-from-psexec-and-wmi-commands
