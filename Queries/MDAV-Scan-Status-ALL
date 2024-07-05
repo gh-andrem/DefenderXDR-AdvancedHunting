@@ -1,0 +1,13 @@
+//name: Defender for Antivirus (MDAV) Scan Status - All Scans
+//description:
+//This query will return a report of all devices that were seen within the last day and their respective quick/full/custom scan status.
+//You can then use the "Take action" button in the Advanced Hunting query dashboard to trigger a full scan on one or multiple devices.
+
+DeviceTvmInfoGathering
+| where LastSeenTime > ago(1d)
+| extend AvScanResults=tostring(AdditionalFields.AvScanResults)
+| extend QuickScanResult=extractjson("$.Quick", AvScanResults, typeof(string))
+| extend FullScanResult=extractjson("$.Full", AvScanResults, typeof(string))
+| extend CustomScanResult=extractjson("$.Custom", AvScanResults, typeof(string))
+| project-away OSPlatform, AdditionalFields, AvScanResults
+| sort by Timestamp desc
