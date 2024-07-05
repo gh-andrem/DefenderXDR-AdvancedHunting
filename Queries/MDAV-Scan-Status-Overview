@@ -1,4 +1,4 @@
-//name: Defender for Antivirus (MDAV) Scan Status
+//name: Defender for Antivirus (MDAV) Scan Status - Overview
 //description:
 //This query will provide a report with devices and their antivirus scan status, e.g. a full scan was completed or cancelled.
 //This query can also be used to create a custom detection rule to create an informational alert when a manually triggered quick or full scan was completed.
