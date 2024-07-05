@@ -1,0 +1,12 @@
+//name: Defender for Antivirus (MDAV) Scan Status - None/Cancelled Full Scans
+//description:
+//This query will return a report of all devices that were seen within the last day and where a full scan has never been run or was cancelled.
+//You can then use the "Take action" button in the Advanced Hunting query dashboard to trigger a full scan on one or multiple devices.
+
+DeviceTvmInfoGathering
+| where LastSeenTime > ago(1d)
+| extend AvScanResults=tostring(AdditionalFields.AvScanResults)
+| extend FullScanResult=extractjson("$.Full", AvScanResults, typeof(string))
+| project-away OSPlatform, AdditionalFields, AvScanResults
+| where FullScanResult has_any ("", "null", "Cancelled")
+| sort by Timestamp desc
