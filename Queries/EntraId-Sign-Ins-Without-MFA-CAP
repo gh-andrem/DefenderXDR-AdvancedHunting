@@ -1,0 +1,33 @@
+//name: Entra ID - All sign-ins without conditional access policy or MFA
+//description:
+//This query returns all sign-ins where neither MFA was required nor conditional access policies were applied.
+//Use this query in Advanced Hunting.
+
+AADSignInEventsBeta
+| where AuthenticationRequirement != "multiFactorAuthentication"
+| where ConditionalAccessStatus == "2" // 2 = Conditional access policy not applied
+| where ErrorCode == "0" // Auth codes = https://learn.microsoft.com/en-us/entra/identity-platform/reference-error-codes
+| where LogonType != '["nonInteractiveUser"]' // Only interactive logons ... see https://learn.microsoft.com/en-us/windows/win32/secauthn/noninteractive-authentication
+| where Application != "Windows Sign In" // Add more applications that can be excluded
+| project
+    Timestamp,
+    AccountUpn,
+    AccountDisplayName,
+    LogonType,
+    IPAddress,
+    Country,
+    NetworkLocationDetails,
+    ErrorCode,
+    Application,
+    ResourceDisplayName,
+    AuthenticationRequirement,
+    ConditionalAccessStatus,
+    ConditionalAccessPolicies,
+    DeviceName,
+    ClientAppUsed,
+    UserAgent,
+    AccountObjectId,
+    ApplicationId,
+    CorrelationId
+| sort by Timestamp desc
+
