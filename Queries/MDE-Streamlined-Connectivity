@@ -6,3 +6,4 @@
 DeviceNetworkEvents
 | where RemoteUrl has "endpoint.security.microsoft.com"
 | project Timestamp, DeviceId, DeviceName, RemoteUrl, RemoteIP, ActionType, InitiatingProcessParentFileName
+//| distinct DeviceName
