@@ -1,0 +1,8 @@
+//name: Defender for Endpoint (MDE) - Streamlined Connectivity Check - Registry
+//description:
+//This query will check if the onboarding registry key contains the new streamlined connectivity URL
+
+DeviceRegistryEvents
+| where RegistryKey == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Advanced Threat Protection"
+| where RegistryValueName == "OnboardingInfo"
+| where RegistryValueData contains "endpoint.security.microsoft.com"
