@@ -1,0 +1,39 @@
+//name: Entra ID - All sign-ins without conditional access policy or MFA - LAW
+//description:
+//This query returns all sign-ins where neither MFA was required nor conditional access policies were applied.
+//Use this query in Log Analytics Workspace.
+
+SigninLogs
+| where AuthenticationRequirement != "multiFactorAuthentication"
+| where ConditionalAccessStatus != "notApplied"
+| where ResultType == "0" // 0 = successful logins
+| where not(AppDisplayName has_any ("Windows Sign In", "APP2", "APP3"))
+| extend x = todynamic(Status)
+| where x.additionalDetails != "MFA requirement satisfied by claim in the token"
+//| where UserType == "Member"
+| project
+    TimeGenerated,
+    UserPrincipalName,
+    UserDisplayName,
+    UserType,
+    IPAddress,
+    Location,
+    NetworkLocationDetails,
+    ResultType,
+    AppDisplayName,
+    ResourceDisplayName,
+    AuthenticationRequirement,
+    AuthenticationRequirementPolicies,
+    ConditionalAccessStatus,
+    ConditionalAccessPolicies,
+    DeviceDetail,
+    ClientAppUsed,
+    UserAgent,
+    TokenIssuerType,
+    HomeTenantId,
+    AADTenantId,
+    ResourceTenantId,
+    UserId,
+    AppId,
+    CorrelationId
+| sort by TimeGenerated desc
