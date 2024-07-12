@@ -8,7 +8,7 @@ AADSignInEventsBeta
 | where ConditionalAccessStatus == "2" // 2 = Conditional access policy not applied
 | where ErrorCode == "0" // Auth codes = https://learn.microsoft.com/en-us/entra/identity-platform/reference-error-codes
 | where LogonType != '["nonInteractiveUser"]' // Only interactive logons ... see https://learn.microsoft.com/en-us/windows/win32/secauthn/noninteractive-authentication
-| where not(Application has_any (Windows Sign In", "APP2", "APP3") // Add more applications that can be excluded
+| where not(Application has_any ("Windows Sign In", "APP2", "APP3") // Add more applications that can be excluded
 | project
     Timestamp,
     AccountUpn,
