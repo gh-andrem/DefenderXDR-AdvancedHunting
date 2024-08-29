@@ -28,3 +28,40 @@ ExposureGraphEdges
 | where EdgeLabel  == "member of"
 | where TargetNodeName has_any ("Domain Admins", "Enterprise Admins")
 | sort by SourceNodeName asc
+
+---
+
+// **3**
+// Failed Kerberos logins
+// Query adjusted, source (https://github.com/DanielpFR/MDI)
+
+IdentityLogonEvents
+| where ActionType == "LogonFailed"
+| where Application == "Active Directory"
+| where Protocol == "Kerberos"
+| summarize count() by AccountName, DeviceName, FailureReason, DC = DestinationDeviceName
+
+---
+
+// **4**
+// Comparison between NTLM and Kerberos
+// Query adjusted, source (https://github.com/DanielpFR/MDI)
+
+IdentityLogonEvents
+| where ActionType == "LogonSuccess"
+| where Application == "Active Directory"
+| where Protocol in ("Ntlm", "Kerberos")
+| summarize count() by Protocol
+| render piechart
+
+---
+
+// **5**
+// NTLM logins
+// Query adjusted, source (https://github.com/DanielpFR/MDI)
+
+IdentityLogonEvents
+| where Application == "Active Directory"
+| where Protocol == "Ntlm"
+| summarize count() by AccountName, DeviceName, Protocol, DC = DestinationDeviceName
+| sort by count_ desc 
