@@ -29,7 +29,8 @@ let configurationIDs = dynamic([
         "scid-2016", 
         "scid-5094", 
         "scid-6094",
-        "scid-96"
+        "scid-96",
+        "scid-2030"
     ]);
 DeviceTvmSecureConfigurationAssessment
 | where Timestamp > ago(7d)
@@ -60,6 +61,7 @@ DeviceTvmSecureConfigurationAssessment
     ConfigurationId == "scid-5094", "CloudProtectionMac", //macOS
     ConfigurationId == "scid-6094", "CloudProtectionLin", //linux
     ConfigurationId == "scid-96"  , "NetworkProtection", //only windows10,11,server2019+
+    ConfigurationId == "scid-2030", "MsSenseVersion", //Server2012R2/2016, macOS, Linux
     "N/A"),
     Result = case(IsApplicable == 0, "N/A", IsCompliant == 1, "GOOD", "BAD")
 | extend packed = pack(Test, Result)
