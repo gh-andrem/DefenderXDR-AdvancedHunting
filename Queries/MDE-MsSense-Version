@@ -7,7 +7,7 @@
 // Edited query from source: https://www.reddit.com/r/DefenderATP/comments/1chox0z/how_do_you_verify_versions_of_mde_sense_agent/
 
 DeviceTvmSoftwareInventory
-| where SoftwareVendor has "microsoft" and SoftwareName == "defender_for_endpoint"
+| where SoftwareName == "defender_for_endpoint"
 //| where OSPlatform !startswith "Windows1"
 | extend MajorVersion = toint(split(SoftwareVersion, '.')[0])
 | extend MinorVersion = toint(split(SoftwareVersion, '.')[1])
