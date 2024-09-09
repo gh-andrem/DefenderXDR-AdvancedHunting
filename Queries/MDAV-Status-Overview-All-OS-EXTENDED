@@ -1,7 +1,7 @@
 //name: Defender for Antivirus (MDAV) Status Overview (Win, macOS, Linux) - POWER QUERY
 //description:
 //This query will provide an extensive report of Windows, macOS and Linux devices (OS platform, OS version, OS architecture, device join type), their installed MDAV versions (signature, engine, platform),
-//MDAV status (active, passive, EDR blocked, unknown ... Windows only).
+//MDAV status (active, passive, EDR blocked, unknown ... Windows only) and MsSense version (EDR component).
 //It can be used for getting an overview of onboarding issues (e.g. with version 4.18.2001.10, devices in EDR blocked mode, ...) and to track the migration from a 3rd-party solution to MDE.
 //Get the current MDAV signature, engine and platform versions at https://www.microsoft.com/security/encyclopedia/adlpackages.aspx?action=info
 
@@ -11,6 +11,9 @@ let avmodetable = DeviceTvmSecureConfigurationAssessment
 | extend AVMode = iif(tostring(avdata[0][0]) == '0', 'Active' , iif(tostring(avdata[0][0]) == '1', 'Passive' ,iif(tostring(avdata[0][0]) == '4', 'EDR Blocked' ,'Unknown')))
 //| where AVMode != "EDR Blocked"
 | project DeviceId, AVMode;
+let sense = DeviceTvmSoftwareInventory
+| where SoftwareName == "defender_for_endpoint"
+| project DeviceId, MsSenseVersion = SoftwareVersion;
 DeviceTvmSecureConfigurationAssessment
 | where ConfigurationId has_any ("scid-6095","scid-5095","scid-2011") and Context != "[]"
 | extend avdata=parsejson(Context)
@@ -22,4 +25,5 @@ DeviceTvmSecureConfigurationAssessment
 | join (DeviceInfo | summarize arg_max(Timestamp, *) by DeviceId) on DeviceId
 | project LastSeen = Timestamp1, DeviceId, DeviceName, DeviceType, RegistryDeviceTag, OSPlatform, OSVersionInfo, OSBuild ,OSArchitecture, MDAVSignatureVersion = AVSigVersion, MDAVEngineVersion = AVEngineVersion, MDAVPlatformVersion = AVProductVersion, MDAVSignLastUpdate = AVSigLastUpdateTime, JoinType
 | join avmodetable on DeviceId
-| project-away DeviceId1
+| join sense on DeviceId
+| project-away DeviceId1, DeviceId2
