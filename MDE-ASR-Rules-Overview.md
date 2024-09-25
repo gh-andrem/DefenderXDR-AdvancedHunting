@@ -17,8 +17,8 @@
 | 15 | Block untrusted and unsigned processes that run from USB                                                                    | b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4 | AsrUntrustedUsbProcessAudited          | AsrUntrustedUsbProcessBlocked          |
 | 16 | Use advanced protection against ransomware                                                                                  | c1db55ab-c21a-4637-bb3f-a12568109d35 | AsrRansomwareAudited                   | AsrRansomwareBlocked                   |
 | 17 | Block Webshell creation for Servers                                                                                         | a8f5898e-1dc8-49a9-9878-85004b8a61e6 | Unknown                                | Unknown                                |
-| 18 | PREVIEW - Block rebooting machine in Safe Mode                                                                              | 33ddedf1-c6e0-47cb-833e-de6133960387 | Unknown                                | Unknown                                |
-| 19 | PREVIEW - Block use of copied or impersonated system tools                                                                  | c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb | AsrCustomRuleAudited                   | Unknown                                |
+| 18 | PREVIEW - Block rebooting machine in Safe Mode                                                                              | 33ddedf1-c6e0-47cb-833e-de6133960387 | AsrSafeModeRebootedAudited             | AsrSafeModeRebootBlocked               |
+| 19 | PREVIEW - Block use of copied or impersonated system tools                                                                  | c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb | AsrAbusedSystemToolAudited /AsrCustomRuleAudited                   | AsrAbusedSystemToolBlocked                                |
 
 
 **Source**
