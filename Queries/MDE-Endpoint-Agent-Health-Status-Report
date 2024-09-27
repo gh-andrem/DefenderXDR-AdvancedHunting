@@ -1,7 +1,11 @@
 //name: Endpoint Health Status Report (customized)
 //description:
 //This query will provide a report of many of the best practice configurations for Defender for Endpoint (MDE) for Windows, Linux and macOS devices.
-//Any tests which are reporting "BAD" as a result imply that the associated capability is not configured per best practice recommendation. "N/A" means that the SCID does not apply to the OS or OS version.
+//
+//"BAD" = Potentially problem with feature that is not configured per best practice recommendation
+//"N/A" = SCID does not apply to the OS or OS version.
+//"Unknown" = Device didn't have enough time to upload information to Defender XDR, e.g. it was just onboarded or hasn't been online for a long enough timeframe.
+//
 //Cloned from https://github.com/Azure/Azure-Sentinel/blob/master/Hunting%20Queries/Microsoft%20365%20Defender/General%20queries/Endpoint%20Agent%20Health%20Status%20Report.yaml
 
 let configurationIDs = dynamic([
