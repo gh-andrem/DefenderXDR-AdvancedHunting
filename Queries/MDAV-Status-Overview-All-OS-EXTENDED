@@ -12,7 +12,7 @@ let avmodetable = DeviceTvmSecureConfigurationAssessment
 //| where AVMode != "EDR Blocked"
 | project DeviceId, AVMode;
 let sense = DeviceTvmSoftwareInventory
-| where SoftwareName == "defender_for_endpoint"
+| where SoftwareName has_any ("defender_for_endpoint", "defender_for_mac", "defender_for_linux")
 | project DeviceId, MsSenseVersion = SoftwareVersion;
 DeviceTvmSecureConfigurationAssessment
 | where ConfigurationId has_any ("scid-6095","scid-5095","scid-2011") and Context != "[]"
