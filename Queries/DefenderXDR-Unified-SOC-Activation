@@ -1,0 +1,24 @@
+//name: Defender XDR - Unified SOC Activation
+//description:
+//This query will find all events where the Microsoft Sentinel Contributor role was assigned. This role will be assigned to two service principals
+//(Enterprise Applications) in Entra Id: Microsoft Threat Protection and WindowsDefenderATP.
+//Uncomment line 22 which will join the SigninLogs table to hopefully retrieve the display name of the service principal instead of just the service
+//principal Id.
+
+AzureActivity
+| where CategoryValue =~ "Administrative" and
+    OperationNameValue =~ "Microsoft.Authorization/roleAssignments/write" and
+    (ActivityStatusValue =~ "Start" or ActivityStatus =~ "Started")
+| extend Properties_d = todynamic(Properties)
+| extend RoleDefinition = extractjson("$.properties.roleDefinitionId",tostring(Properties_d.requestbody),typeof(string))
+| extend PrincipalId = extractjson("$.properties.principalId",tostring(Properties_d.requestbody),typeof(string))
+| extend PrincipalType = extractjson("$.properties.principalType",tostring(Properties_d.requestbody),typeof(string))
+| extend Scope = extractjson("$.properties.scope",tostring(Properties_d.requestbody),typeof(string))
+| where Scope !contains "resourcegroups"
+| extend RoleId = split(RoleDefinition,'/')[-1]
+| extend RoleDisplayName = case(
+    RoleId =~ 'ab8e14d6-4a74-4a29-9ba8-549422addade', "Microsoft Sentinel Contributor",
+    "Irrelevant")
+| where RoleDisplayName != "Irrelevant"
+// | join (SigninLogs | summarize arg_max(TimeGenerated, *) by ResourceServicePrincipalId) on $left.PrincipalId == $right.ResourceServicePrincipalId // Might not be working properly
+| project TimeGenerated, Scope, RoleDisplayName, PrincipalId, PrincipalType//, ResourceDisplayName
