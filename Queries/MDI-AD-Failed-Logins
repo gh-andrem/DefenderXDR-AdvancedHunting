@@ -1,0 +1,9 @@
+//name: MDI - Get unsuccessful logins to AD
+//description:
+//This query will find all logins that were unsuccessful to Active Directory
+
+IdentityLogonEvents 
+| where Application == "Active Directory" 
+| where ActionType != "LogonSuccess" 
+| project AccountUpn, AccountName, DeviceName, ActionType, FailureReason 
+| summarize count() by DeviceName, AccountUpn, AccountName
