@@ -15,14 +15,15 @@ let sense = DeviceTvmSoftwareInventory
 | where SoftwareName startswith "defender_for_"
 | project DeviceId, MsSenseVersion = SoftwareVersion;
 DeviceTvmSecureConfigurationAssessment
-| where ConfigurationId has_any ("scid-6095","scid-5095","scid-2011") and Context != "[]"
+| where ConfigurationId has_any ("scid-6095","scid-5095","scid-2011") // and Context != "[]"
 | extend avdata=parsejson(Context)
 | extend AVSigVersion = tostring(avdata[0][0])
 | extend AVEngineVersion = tostring(avdata[0][1])
 | extend AVSigLastUpdateTime = todatetime(avdata[0][2])
 | extend AVProductVersion = tostring(avdata[0][3])
 | join (DeviceInfo | summarize arg_max(Timestamp, *) by DeviceId) on DeviceId
-| project LastSeen = Timestamp1, DeviceId, DeviceName, DeviceType, RegistryDeviceTag, OSPlatform, OSVersionInfo, OSBuild ,OSArchitecture, MDAVSignatureVersion = AVSigVersion, MDAVEngineVersion = AVEngineVersion, MDAVPlatformVersion = AVProductVersion, MDAVSignLastUpdate = AVSigLastUpdateTime, JoinType
+| where OnboardingStatus == "Onboarded"
+| project LastSeen = Timestamp1, DeviceId, DeviceName, DeviceType, RegistryDeviceTag, OSPlatform, OSDistribution = iif(OSPlatform != OSDistribution, OSDistribution, ""), OSVersionInfo, OSBuild, OSArchitecture, MDAVSignatureVersion = AVSigVersion, MDAVEngineVersion = AVEngineVersion, MDAVPlatformVersion = AVProductVersion, MDAVSignLastUpdate = AVSigLastUpdateTime, JoinType
 | join avmodetable on DeviceId
 | join sense on DeviceId
 | project-away DeviceId1, DeviceId2
