@@ -35,6 +35,6 @@ DeviceEvents
 | join kind=leftouter (AsrMatrix | project AsrRuleId = tolower(AsrRuleId), RuleDescription) on AsrRuleId
 | join kind=inner (DeviceInfo | distinct DeviceId, OSPlatform) on DeviceId
 //| where OSPlatform contains "Server"
-| project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, ActionType, RuleDescription, AsrRuleId, FileName, FolderPath, InitiatingProcessSHA1, InitiatingProcess = strcat(InitiatingProcessFolderPath, "\\" , InitiatingProcessFileName)
+| project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, ActionType, RuleDescription, AsrRuleId, SHA1, FileName, FolderPath, ProcessCommandLine, InitiatingProcessSHA1, InitiatingProcess = strcat(InitiatingProcessFolderPath, "\\" , InitiatingProcessFileName)
 | sort by Timestamp desc 
 | summarize count() by RuleDescription | sort by count_ desc 
