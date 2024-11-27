@@ -18,4 +18,4 @@ DeviceEvents
 | extend GroupSid = tostring(Details.GroupSid)
 | where GroupSid == "S-1-5-32-544"
 | join kind=leftouter Identities on AccountSid
-| project Timestamp, ReportId, DeviceId, InitiatingProcessAccountName, AccountSid, AssignedDomain = AccountDomain1, AssignedUser = AccountName1
+| project Timestamp, ReportId, DeviceId, DeviceName, InitiatingProcessAccountSid, InitiatingProcessAccountDomain, InitiatingProcessAccountName, AccountSid, AssignedDomain = AccountDomain1, AssignedUser = AccountName1
