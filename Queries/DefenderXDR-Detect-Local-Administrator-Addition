@@ -1,0 +1,20 @@
+//name: Defender XDR - Detect Local Administrator Addition
+//description:
+//This query returns identities that were added to the (local) "Administrators" group which were then used to log in (Interactive, RemoteInteractive, ...).
+//You can create a custom detection rule with this query (min. 1 hr frequency).
+//To test this feature, create a scheduled task to run as SYSTEM executing the below action in PowerShell. Then either log in with this user or open an application as a different user.
+//`$pw=ConvertTo-SecureString "fake-pw123!" -AsPlainText -Force;New-LocalUser -Name "local-admin-test" -Password $pw;Add-LocalGroupMember -Group "Administrators" -Member "local-admin-test"`
+
+let LocalAdminAddition = DeviceEvents
+| where TimeGenerated > ago(30d)
+| where ActionType == "UserAccountAddedToLocalGroup"
+| extend Details = parse_json(AdditionalFields)
+| extend GroupSid = tostring(Details.GroupSid)
+| where GroupSid == "S-1-5-32-544"
+| project Timestamp, AccountSid, InitiatingProcessAccountSid, InitiatingProcessAccountDomain, InitiatingProcessAccountName;
+DeviceLogonEvents
+//| where TimeGenerated > ago(1h)
+| where ActionType == "LogonSuccess"
+| where IsLocalAdmin == 1
+| join LocalAdminAddition on AccountSid
+| project Timestamp, ReportId, DeviceId, DeviceName, LogonType, AccountDomain, AccountName, AccountSid, TimeWhenUserBecameLocalAdmin = Timestamp1, InitiatingProcessAccountSid, InitiatingProcessAccountDomain, InitiatingProcessAccountName
