@@ -1,0 +1,10 @@
+//name: MDE - Find devices with previous EDR/AV solution
+//description:
+//Useful to find remnants of the previous EDR/AV solution which might still be installed. Enter the name of the solution in line 7.
+//Use this as a custom detection in Defender XDR to get alerted automatically, e.g. once a day.
+
+DeviceTvmSoftwareInventory
+| where SoftwareName contains "ENTER NAME OF 3RD PARTY AV/EDR"
+| join (DeviceInfo | summarize arg_max(Timestamp, *) by DeviceId | project Timestamp, ReportId, DeviceId) on DeviceId
+| where Timestamp > ago(1d)
+| project ReportId, Timestamp, DeviceId, DeviceName, OSPlatform, SoftwareVendor, SoftwareName, SoftwareVersion
