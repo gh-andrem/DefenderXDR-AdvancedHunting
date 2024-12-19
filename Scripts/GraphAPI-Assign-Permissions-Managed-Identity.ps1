@@ -22,7 +22,7 @@ $permissions = @(
 
 $GraphServicePrincipal = Get-MgServicePrincipal -Filter "appId eq '$GraphAppId'"
 
-foreach ($permission in $Permissions) {
+foreach ($permission in $permissions) {
   $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $permission -and $_.AllowedMemberTypes -contains "Application"}
   $params = @{
        principalId = $MI.Id
