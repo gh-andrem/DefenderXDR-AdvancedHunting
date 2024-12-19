@@ -3,7 +3,7 @@
 # Script Name:     GraphAPI-Assign-Permissions-Managed-Identity.ps1
 # Description:     Assign Graph API application permissions to a managed identity (e.g. for Azure Runbooks, Logic Apps, ...)
 # Arguments:       none
-# Prerequisites:   Microsoft.Graph PowerShell module
+# Prerequisites:   Microsoft.Graph PowerShell module, Entra identity with proper permissions to execute below change
 # Version:	       1.0 (created 12/19/2024)
 #
 #=============================================================================================================================
@@ -18,16 +18,16 @@ $GraphAppId = "00000003-0000-0000-c000-000000000000"
 $permissions = @(
       "User.Read.All",
       "UserAuthenticationMethod.Read.All"
-    )
+)
 
 $GraphServicePrincipal = Get-MgServicePrincipal -Filter "appId eq '$GraphAppId'"
 
 foreach ($permission in $permissions) {
-  $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $permission -and $_.AllowedMemberTypes -contains "Application"}
-  $params = @{
-       principalId = $MI.Id
-       resourceId = $GraphServicePrincipal.Id
-       appRoleId = $AppRole.Id
-  }
-  New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $MI.Id -BodyParameter $params
+      $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $permission -and $_.AllowedMemberTypes -contains "Application"}
+      $params = @{
+            principalId = $MI.Id
+            resourceId = $GraphServicePrincipal.Id
+            appRoleId = $AppRole.Id
+      }
+      New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $MI.Id -BodyParameter $params
 }
