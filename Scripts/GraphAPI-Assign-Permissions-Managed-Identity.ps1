@@ -11,7 +11,7 @@
 Import-Module Microsoft.Graph
 Connect-MgGraph -Scopes "Application.Read.All, AppRoleAssignment.ReadWrite.All"
 
-#$MIGuid = "ADD YOUR MANAGED ID OBJECT ID"
+$MIGuid = "ADD YOUR MANAGED ID OBJECT ID"
 $MI = Get-MgServicePrincipal -Filter "Id eq '$MIGuid'"
 $GraphAppId = "00000003-0000-0000-c000-000000000000"
 
