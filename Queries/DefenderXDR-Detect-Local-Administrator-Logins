@@ -1,0 +1,9 @@
+//name: Defender XDR - Detect Local Administrator Logins
+//description:
+//This query shows all logins (interactive and non-interactive) of a local administrator.
+
+DeviceLogonEvents
+| where TimeGenerated > ago(30d)
+| where ActionType == "LogonSuccess"
+| where IsLocalAdmin == 1
+| distinct DeviceId, DeviceName, AccountDomain, AccountName
