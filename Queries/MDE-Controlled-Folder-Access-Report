@@ -1,5 +1,6 @@
 //name: Controlled Folder Access Report
 //description:
+//Version: 0.2 (2025-2-4)
 //This query will provide a report with all Controlled Folder Access actions that were audited or blocked. It also returns the OSPlatform column from the DeviceInfo table.
 //This query can also be used to create a custom detection rule that creatse an informational alert when a Controlled Folder Access action was triggered.
 
@@ -8,5 +9,6 @@ DeviceEvents
 | where ActionType has_any ('ControlledFolderAccessViolationAudited', 'ControlledFolderAccessViolationBlocked')
 | join kind=inner (DeviceInfo | distinct DeviceId, OSPlatform) on DeviceId
 //| where OSPlatform contains "Server"
-| project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, ActionType, FolderPath, FileName, InitiatingProcessSHA1, InitiatingProcess = strcat(InitiatingProcessFolderPath, "\\" , InitiatingProcessFileName)
+| project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, ActionType, FileTriggered = strcat(FolderPath, "\\" , FileName), ProcessCommandLine, InitiatingProcessSHA1, InitiatingProcess = InitiatingProcessFolderPath //InitiatingProcess = strcat(InitiatingProcessFolderPath, "\\" , InitiatingProcessFileName)
 | sort by Timestamp desc 
+| summarize count() by DeviceName, FileTriggered, InitiatingProcess | sort by count_ desc
