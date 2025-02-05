@@ -1,6 +1,8 @@
 //name: Find WSL1, WSL2 and HyperV instances
 //description:
 //This query finds all WSL1, WSL2 and HyperV instances on devices that are onboarded to MDE. This query is a DRAFT and might not necessarily filter out duplicate entries.
+//The output shows an overview of distint events where a user ran a command inside a WSL1 instance or connected to a WSL2 or HyperV instance.
+//Each query can be run separately to find out more about WSL distribution names and distribution IDs.
 
 let timeframe = 30d;
 let wsl1 =
@@ -28,5 +30,5 @@ DeviceProcessEvents
 | where FileName == "vmconnect.exe"
 | extend VMType = "hyperv"
 | union wsl1, wsl2
-| project DeviceId, DeviceName, VMType, InitiatingProcessAccountDomain, InitiatingProcessAccountName
+| distinct DeviceId, DeviceName, VMType, InitiatingProcessAccountDomain, InitiatingProcessAccountName
 | sort by DeviceName asc
