@@ -12,3 +12,4 @@
 - MDAV Status Overview
 - SmartScreen
 - Network Protection
+- WSL1, WSL2 and HyperV instances
