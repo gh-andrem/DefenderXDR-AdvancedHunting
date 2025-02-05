@@ -1,0 +1,32 @@
+//name: Find WSL1, WSL2 and HyperV instances
+//description:
+//This query finds all WSL1, WSL2 and HyperV instances on devices that are onboarded to MDE. This query is a DRAFT and might not necessarily filter out duplicate entries.
+
+let timeframe = 30d;
+let wsl1 =
+DeviceProcessEvents
+    | where Timestamp > ago(timeframe)
+    | where InitiatingProcessFileName == "wsl.exe" and FileName == "init"
+    | extend DistroName = iif((InitiatingProcessCommandLine startswith '"wsl.exe" -'), (split(InitiatingProcessCommandLine, " ", 2)), (split(InitiatingProcessCommandLine, " ", 3)))
+    | extend DistroName = trim(@'[[\]"]+', tostring(DistroName))
+    | extend VMType = "wsl1"
+    | distinct DeviceId, DeviceName, VMType, DistroName, InitiatingProcessAccountDomain, InitiatingProcessAccountName;
+let wsl2 =
+DeviceProcessEvents
+    | where Timestamp > ago(timeframe)
+    | where InitiatingProcessFileName == "wsl.exe"
+    | where FileName == "wslhost.exe"
+    | extend DistroId = split(ProcessCommandLine, " ", 2)
+    | extend DistroId = trim(@'[[\]"{}]+', tostring(DistroId))
+    | extend DistroName = iif((InitiatingProcessCommandLine startswith '"wsl.exe"'), (split(InitiatingProcessCommandLine, " ", 2)), (split(InitiatingProcessCommandLine, " ", 3)))
+    | extend DistroName = trim(@'[[\]"]+', tostring(DistroName))
+    | extend VMType = "wsl2"
+    | distinct DeviceId, DeviceName, VMType, DistroId, InitiatingProcessAccountDomain, InitiatingProcessAccountName;
+DeviceProcessEvents
+| where Timestamp > ago(timeframe)
+| where InitiatingProcessFileName == "mmc.exe"
+| where FileName == "vmconnect.exe"
+| extend VMType = "hyperv"
+| union wsl1, wsl2
+| project DeviceId, DeviceName, VMType, InitiatingProcessAccountDomain, InitiatingProcessAccountName
+| sort by DeviceName asc
