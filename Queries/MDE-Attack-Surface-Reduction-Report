@@ -4,8 +4,8 @@
 //This query will provide a report with all blocked or audited Attack Surface Reduction rules. It also returns the OSPlatform column from the DeviceInfo table.
 //To find all ASR rules that triggered in block mode replace "Audited" for "Blocked" in the line 31 below. Choose 30d timeframe.
 //Uncomment line 35 to inspect one specific ASR rule. This is useful as Advanced Hunting is limited to 30000 results and export to CSV is limited to 10000 results.
-//Comment line 42 to show all ASR events.
-//Uncomment line 43 to summarize ASR events by device, filename, process.
+//Comment line 43 to show all ASR events.
+//Uncomment line 44 to summarize ASR events by device, filename, process.
 //This query can also be used to create a custom detection rule to create an informational alert when a specific ASR rule was triggered.
 
 let AsrMatrix = datatable(RuleDescription:string, AsrRuleId:string)
