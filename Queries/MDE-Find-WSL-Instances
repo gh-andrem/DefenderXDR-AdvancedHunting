@@ -1,6 +1,8 @@
 //name: Find WSL instances
 //description:
-//This first query will find all hosts where WSL is installed. The second query will find all devices where WSL was running as a process.
+//This first query will find all hosts where WSL is installed.
+//The second query will find all devices where WSL was running as a process.
+//The third query will find all WSL2 instances that are onboarded using the MDE WSL2 Plugin
 
 DeviceTvmSoftwareInventory
 | where SoftwareName contains "windows_subsystem_for_linux"
@@ -13,3 +15,8 @@ DeviceProcessEvents
 | project TimeGenerated, DeviceId, DeviceName, FileName, ProcessCommandLine, AccountDomain, AccountName
 | sort by TimeGenerated desc
 | distinct DeviceName
+
+
+DeviceInfo
+| where RegistryDeviceTag == "WSL2"
+| distinct DeviceId, DeviceName, OSPlatform, RegistryDeviceTag
