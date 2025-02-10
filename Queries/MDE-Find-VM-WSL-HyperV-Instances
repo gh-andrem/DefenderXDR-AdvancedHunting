@@ -1,34 +1,22 @@
 //name: Find WSL1, WSL2 and HyperV instances
+//Updated: 2025-2-10
 //description:
 //This query finds all WSL1, WSL2 and HyperV instances on devices that are onboarded to MDE. This query is a DRAFT and might not necessarily filter out duplicate entries.
 //The output shows an overview of distint events where a user ran a command inside a WSL1 instance or connected to a WSL2 or HyperV instance.
 //Each query can be run separately to find out more about WSL distribution names and distribution IDs.
 
 let timeframe = 30d;
-let wsl1 =
+let wsl =
 DeviceProcessEvents
     | where Timestamp > ago(timeframe)
-    | where InitiatingProcessFileName == "wsl.exe" and FileName == "init"
-    | extend DistroName = iif((InitiatingProcessCommandLine startswith '"wsl.exe" -'), (split(InitiatingProcessCommandLine, " ", 2)), (split(InitiatingProcessCommandLine, " ", 3)))
-    | extend DistroName = trim(@'[[\]"]+', tostring(DistroName))
-    | extend VMType = "wsl1"
-    | distinct DeviceId, DeviceName, VMType, DistroName, InitiatingProcessAccountDomain, InitiatingProcessAccountName;
-let wsl2 =
-DeviceProcessEvents
-    | where Timestamp > ago(timeframe)
-    | where InitiatingProcessFileName == "wsl.exe"
-    | where FileName == "wslhost.exe"
-    | extend DistroId = split(ProcessCommandLine, " ", 2)
-    | extend DistroId = trim(@'[[\]"{}]+', tostring(DistroId))
-    | extend DistroName = iif((InitiatingProcessCommandLine startswith '"wsl.exe"'), (split(InitiatingProcessCommandLine, " ", 2)), (split(InitiatingProcessCommandLine, " ", 3)))
-    | extend DistroName = trim(@'[[\]"]+', tostring(DistroName))
-    | extend VMType = "wsl2"
-    | distinct DeviceId, DeviceName, VMType, DistroId, InitiatingProcessAccountDomain, InitiatingProcessAccountName;
+    | where InitiatingProcessFileName == "wsl.exe" and (FileName == "init" or FileName == "wslhost.exe")
+    | extend VMType = iif(FileName == "init", "wsl1", "wsl2")
+    | extend DistroId = iif(FileName == "wslhost.exe", trim(@'[[\]"{}]+', tostring(split(ProcessCommandLine, " ", 2))), "")
+    | extend DistroName = trim(@'[[\]"]+', tostring(iif((InitiatingProcessCommandLine startswith '"wsl.exe" -'), (split(InitiatingProcessCommandLine, " ", 2)), (split(InitiatingProcessCommandLine, " ", 3)))));
 DeviceProcessEvents
 | where Timestamp > ago(timeframe)
-| where InitiatingProcessFileName == "mmc.exe"
-| where FileName == "vmconnect.exe"
+| where InitiatingProcessFileName == "mmc.exe" and FileName == "vmconnect.exe"
 | extend VMType = "hyperv"
-| union wsl1, wsl2
+| union wsl
 | distinct DeviceId, DeviceName, VMType, InitiatingProcessAccountDomain, InitiatingProcessAccountName
 | sort by DeviceName asc
