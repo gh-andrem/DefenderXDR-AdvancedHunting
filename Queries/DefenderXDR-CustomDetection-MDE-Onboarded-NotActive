@@ -5,7 +5,7 @@
 //Use this as a custom detection in Defender XDR to get alerted automatically, e.g. once a day.
 
 let avmodetable = DeviceTvmSecureConfigurationAssessment
-| where ConfigurationId == "scid-2010" and isnotempty(Context)
+| where ConfigurationId == "scid-2010" and IsApplicable == "1"
 | extend avdata=parsejson(Context)
 | extend AVMode = iif(tostring(avdata[0][0]) == '0', 'Active' , iif(tostring(avdata[0][0]) == '1', 'Passive' ,iif(tostring(avdata[0][0]) == '4', 'EDR Blocked' ,'Unknown')))
 | where AVMode != "Active"
