@@ -1,4 +1,5 @@
 //name: MDE - Onboarded devices where MDAV is not active
+//updated: 2025/02/11
 //description:
 //Ideally, onboarded devices should have MDAV in active mode. MDAV will go into passive mode when another AV solution is installed or when engine or platform versions are outdated.
 //Another use case is when the device is onboarded to MDE if another AV solution came pre-installed with the OS, e.g. HP Wolf Security.
@@ -7,12 +8,17 @@
 let avmodetable = DeviceTvmSecureConfigurationAssessment
 | where ConfigurationId == "scid-2010" and IsApplicable == "1"
 | extend avdata=parsejson(Context)
-| extend AVMode = iif(tostring(avdata[0][0]) == '0', 'Active' , iif(tostring(avdata[0][0]) == '1', 'Passive' ,iif(tostring(avdata[0][0]) == '4', 'EDR Blocked' ,'Unknown')))
+| extend AVMode = case(
+    tostring(avdata[0][0]) == "0", "Active",
+    tostring(avdata[0][0]) == "1", "Passive",
+    tostring(avdata[0][0]) == "4", "EDR Blocked",
+    "Unknown"
+)
 | where AVMode != "Active"
 | project DeviceId, AVMode;
 DeviceInfo
 | where Timestamp > ago(1d)
 | where OnboardingStatus == "Onboarded"
 | summarize arg_max(Timestamp,*) by DeviceId
-| join avmodetable on DeviceId
+| join kind=inner avmodetable on DeviceId
 | project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, AVMode
