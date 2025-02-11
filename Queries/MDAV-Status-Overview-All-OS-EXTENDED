@@ -1,4 +1,5 @@
 //name: Defender for Antivirus (MDAV) Status Overview (Win, macOS, Linux) - POWER QUERY
+//Updated: 2025/02/11
 //description:
 //This query will provide an extensive report of Windows, macOS and Linux devices (OS platform, OS version, OS architecture, device join type), their installed MDAV versions (signature, engine, platform),
 //MDAV status (active, passive, EDR blocked, unknown ... Windows only) and MsSense version (EDR component).
