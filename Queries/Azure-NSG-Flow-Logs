@@ -1,0 +1,8 @@
+//name: Azure - Network Security Group Flow Logs
+//description:
+//Quick and dirty solution to check which remote IP is trying (and being blocked) by a default inbound block all rule. 
+
+AzureNetworkAnalytics_CL
+| where NSGRule_s == "denyallinbound"
+| where DestPort_d == "3389"
+| project TimeGenerated, DestIP_s, DestPort_d, PublicIPs_s, SrcIP_s, SrcPublicIPs_s, NSGRule_s
