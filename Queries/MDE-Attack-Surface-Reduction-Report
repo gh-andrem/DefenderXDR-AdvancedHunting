@@ -1,6 +1,6 @@
 //name: Attack Surface Reduction Report (Audit/Block)
+//version: 0.3 (2025-2-14)
 //description:
-//Version: 0.3 (2025-2-14)
 //This query will provide a report with all blocked or audited Attack Surface Reduction rules. It also returns the OSPlatform column from the DeviceInfo table.
 //To find all ASR rules that triggered in block mode replace "Audited" for "Blocked" in the line 31 below. Choose 30d timeframe.
 //Uncomment line 36 to inspect one specific ASR rule. This is useful as Advanced Hunting is limited to 30000 results and export to CSV is limited to 10000 results.
