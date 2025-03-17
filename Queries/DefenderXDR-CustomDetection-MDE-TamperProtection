@@ -1,8 +1,8 @@
 //name: MDE - Tamper Protection Inactive
+//updated: 2024-12-5
 //description:
 //Tamper Protection should be enabled for all devices that are onboarded to MDE to prevent any local changes
 //Use this as a custom detection in Defender XDR to get alerted automatically, e.g. once a day.
-
 DeviceTvmSecureConfigurationAssessment
 | where Timestamp > ago(1d)
 | where ConfigurationId in ("scid-2003", "scid-5092")
