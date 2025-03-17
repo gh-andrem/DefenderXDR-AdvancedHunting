@@ -1,9 +1,9 @@
 //name: MDE - Find legacy Windows Server (2012R2, 2016) OS with outdated MsSense versions
+//updated: 2024-12-5
 //description:
 //As of today (2024/12/5) the unfified MDE msi package for Server 2012R2 and 2016 includes an outdated MsSense version (10.8295.22621.1023) which needs to be updated manually.
 //Check https://learn.microsoft.com/en-us/defender-endpoint/windows-whatsnew for the most recent version and how to manually update.
 //Use this as a custom detection in Defender XDR to get alerted automatically, e.g. once a day.
-
 let sense = DeviceTvmSoftwareInventory
 | where SoftwareName startswith "defender_for_"
 | project DeviceId, MsSenseVersion = SoftwareVersion;
