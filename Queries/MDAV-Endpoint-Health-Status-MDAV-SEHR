@@ -1,4 +1,4 @@
-//name: Defender for Antivirus (MDAV) and Endpoint Health (Win, macOS, Linux) - MDAV-SEH
+//name: Defender for Antivirus (MDAV) and Endpoint Health Status Report (Win, macOS, Linux) - MDAV-SEHR
 //updated: 2025-3-17
 //description:
 //This query combines both MDAV Status Report (https://github.com/gh-andrem/DefenderXDR-AdvancedHunting/blob/main/Queries/MDAV-Status-Overview-All-OS-EXTENDED) and Endpoint Health Status Report
