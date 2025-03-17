@@ -1,7 +1,7 @@
 //name: Defender for Endpoint - Vulnerability Management - Vulnerable Component By Device
+//updated: 2025-2-10
 //description:
 //This query returns the file or registry path of a specific vulnerable component (e.g. openssl) for all devices, a specific device name or OS platform.
-
 DeviceTvmSoftwareEvidenceBeta
 | where todatetime(LastSeenTime) > ago(1d)
 //| where SoftwareName == "openssl"
