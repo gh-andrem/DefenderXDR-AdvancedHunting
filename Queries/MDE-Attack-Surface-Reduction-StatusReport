@@ -1,8 +1,8 @@
 //name: Attack Surface Reduction Status Report
+//updated: 2025-1-29
 //description:
 //This query will provide a report with all blocked or audited Attack Surface Reduction rules.
 //Source: https://github.com/alexverboon/Hunting-Queries-Detection-Rules/blob/main/Defender%20For%20Endpoint/MDE-ASR%20State.md
-
 DeviceInfo
 | where OnboardingStatus == 'Onboarded'
 | where isnotempty(OSPlatform)
