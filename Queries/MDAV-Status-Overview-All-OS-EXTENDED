@@ -1,11 +1,10 @@
 //name: Defender for Antivirus (MDAV) Status Overview (Win, macOS, Linux) - POWER QUERY
-//Updated: 2025/02/11
+//Updated: 2025-2-11
 //description:
 //This query will provide an extensive report of Windows, macOS and Linux devices (OS platform, OS version, OS architecture, device join type), their installed MDAV versions (signature, engine, platform),
 //MDAV status (active, passive, EDR blocked, unknown ... Windows only) and MsSense version (EDR component).
 //It can be used for getting an overview of onboarding issues (e.g. old platform version, devices in EDR blocked mode, ...) and to track the migration from a 3rd-party solution to MDE.
 //Get the current MDAV signature, engine and platform versions at https://www.microsoft.com/security/encyclopedia/adlpackages.aspx?action=info
-
 let avmodetable = DeviceTvmSecureConfigurationAssessment
 | where ConfigurationId == "scid-2010" and isnotempty(Context)
 | extend avdata = parsejson(Context)
