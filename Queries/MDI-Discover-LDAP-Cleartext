@@ -1,7 +1,7 @@
 //name: MDI - LDAP Cleartext Discovery
+//updated: 2023-9-28
 //description:
 //This query will find all processes and identities that try to authenticate in cleartext using LDAP.
-
 IdentityLogonEvents
 | where Timestamp > ago(7d)
 | where LogonType == "LDAP cleartext"
