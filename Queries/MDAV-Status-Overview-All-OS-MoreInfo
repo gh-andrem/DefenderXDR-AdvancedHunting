@@ -1,10 +1,10 @@
 //name: Defender for Antivirus (MDAV) Status Overview (Win, macOS, Linux) - More Information
+//updated: 2024-4-3
 //description:
 //This query will provide an extensive report of Windows, macOS and Linux devices, their installed MDAV versions (signature, engine, platform) and MDAV status
 //(active, passive, EDR blocked, unknown ... Windows only). Use at your discretion as information might not be correct - use the MDAV-Status-Overview-All-OS-EXTENDED instead. 
 //It can be used for getting an overview of onboarding issues (e.g. with version 4.18.2001.10, devices in EDR blocked mode, ...) and to track the migration from a 3rd-party solution to MDE.
 //Get the current MDAV signature, engine and platform versions at https://www.microsoft.com/security/encyclopedia/adlpackages.aspx?action=info
-
 DeviceTvmInfoGathering
 | extend avdata=parsejson(AdditionalFields)
 | extend AvMode = iif(tostring(avdata.AvMode) == '0', 'Active' , iif(tostring(avdata.AvMode) == '1', 'Passive' ,iif(tostring(avdata.AvMode) == '4', 'EDR Blocked' ,'Unknown')))
