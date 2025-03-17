@@ -1,8 +1,8 @@
 //name: Device Control Events
+//updated: 2023-5-26
 //description:
 //This query will provide a report with all actions that were triggered by Device Control policies.
 //RemovableStoragePolicyTriggered: event triggered by Disk and file system level enforcement
-
 DeviceEvents
 | where ActionType == "RemovableStoragePolicyTriggered"
 | extend parsed=parse_json(AdditionalFields)
