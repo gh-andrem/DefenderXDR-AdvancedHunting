@@ -2,7 +2,6 @@
 //updated: 2025-2-27
 //description:
 //This query returns the browser extensions for each device including extension risk. You will need a Vulnerability Management license (add-on or standalone).
-
 DeviceTvmBrowserExtensions
 | join kind=inner (DeviceInfo | summarize arg_max(Timestamp, *) by DeviceId | project DeviceId, DeviceName, OSPlatform) on DeviceId
 | summarize by DeviceName, OSPlatform, BrowserName, ExtensionId, ExtensionName, ExtensionVersion, ExtensionRisk
