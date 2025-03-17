@@ -1,4 +1,5 @@
 //name: MDE - SmartScreen, Network Protection, Web Content Filtering Report
+//updated: 2024-10-2
 //description:
 //This query will provide a report with all blocked URLs within Edge (SmartScreen) and non-Edge (network protection).
 //It will also show SmartScreen app warnings and when users bypassed the browser's decision `SmartScreenUserOverride`.
@@ -7,7 +8,6 @@
 //CustomBlockList - Blocked by custom MDE indicator (IoC)
 //CasbPolicy - Blocked by unsanctioned app through MDCA
 //Other values (e.g. malicious, phishing, untrusted, ...) - Blocked natively by SmartScreen/network protection
-
 DeviceEvents
 | where ActionType has_any ("SmartScreenAppWarning", "SmartScreenUrlWarning", "ExploitGuardNetworkProtectionBlocked", "SmartScreenUserOverride")
 | extend ParsedFields=parse_json(AdditionalFields)
