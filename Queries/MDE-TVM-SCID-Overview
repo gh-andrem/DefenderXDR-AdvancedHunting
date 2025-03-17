@@ -1,10 +1,10 @@
 //name: Overview of SCIDs from Threat and Vulnerability Management (TVM) module recommendations in MDE
+//updated: 2023-5-26
 //description:
 //This query will provide a list of all SCIDs in a M365D instance
 //Line 2 in the query can be adjusted to your needs to get a list for a specific config category (e.g. Antivirus), if that category applies to the devices in your instance and
 //if devices onboarded to MDE in your instance are compliant to specific category items.
 //IsCompliant == 1 will also return TVM category items even if some devices are still exposed to the specific item. 
-
 DeviceTvmSecureConfigurationAssessment
 //| where ConfigurationSubcategory == 'Antivirus' and IsApplicable == 1 and IsCompliant == 0
 | join kind=leftouter (
