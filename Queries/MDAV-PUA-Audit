@@ -1,7 +1,7 @@
 //name: Defender for Antivirus (MDAV) - PUA Audit Detections
+//updated: 2024-5-2
 //description:
 //This query returns all potentially unwanted app (PUA) detections when PUA detection is in audit mode
-
 DeviceEvents
 | where ActionType == "OtherAlertRelatedActivity"
 | extend x = parse_json(AdditionalFields)
