@@ -1,8 +1,8 @@
 //name: Entra ID - All sign-ins without conditional access policy or MFA - LAW
+//updated: 2024-7-12
 //description:
 //This query returns all sign-ins where neither MFA was required nor conditional access policies were applied.
 //Use this query in Log Analytics Workspace.
-
 SigninLogs
 | where AuthenticationRequirement != "multiFactorAuthentication"
 | where ConditionalAccessStatus != "notApplied"
