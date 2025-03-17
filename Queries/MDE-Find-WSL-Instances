@@ -1,4 +1,5 @@
 //name: Find WSL instances
+//updated: 2025-2-5
 //description:
 //This first query will find all hosts where WSL is installed.
 //The second query will find all devices where WSL was running as a process.
