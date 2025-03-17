@@ -1,7 +1,7 @@
 //name: MDI - Get unsuccessful logins to AD
+//updated: 2024-10-25
 //description:
 //This query will find all logins that were unsuccessful to Active Directory
-
 IdentityLogonEvents 
 | where Application == "Active Directory" 
 | where ActionType != "LogonSuccess" 
