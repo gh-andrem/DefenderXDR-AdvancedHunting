@@ -1,0 +1,155 @@
+//name: Defender for Antivirus (MDAV) and Endpoint Health (Win, macOS, Linux) - MDAV-SEH
+//updated: 2025-3-17
+//description:
+//This query combines both MDAV Status Report (https://github.com/gh-andrem/DefenderXDR-AdvancedHunting/blob/main/Queries/MDAV-Status-Overview-All-OS-EXTENDED) and Endpoint Health Status Report
+//(https://github.com/gh-andrem/DefenderXDR-AdvancedHunting/blob/main/Queries/MDE-Endpoint-Agent-Health-Status-Report).
+//
+//MDAV Status Report
+//This query will provide an extensive report of Windows, macOS and Linux devices (OS platform, OS version, OS architecture, device join type), their installed MDAV versions (signature, engine, platform),
+//MDAV status (active, passive, EDR blocked, unknown ... Windows only) and MsSense version (EDR component).
+//It can be used for getting an overview of onboarding issues (e.g. old platform version, devices in EDR blocked mode, ...) and to track the migration from a 3rd-party solution to MDE.
+//Get the current MDAV signature, engine and platform versions at https://www.microsoft.com/security/encyclopedia/adlpackages.aspx?action=info
+//
+//Endpoint Health Status Report (customized)
+//This query will provide a report of many of the best practice configurations for Defender for Endpoint (MDE) for Windows, Linux and macOS devices.
+//
+//"BAD" = Potentially problem with feature that is not configured per best practice recommendation
+//"N/A" = SCID does not apply to the OS or OS version.
+//"Unknown" = Device didn't have enough time to upload information to Defender XDR, e.g. it was just onboarded or hasn't been online for a long enough timeframe.
+//
+//Cloned from https://github.com/Azure/Azure-Sentinel/blob/master/Hunting%20Queries/Microsoft%20365%20Defender/General%20queries/Endpoint%20Agent%20Health%20Status%20Report.yaml
+//
+let Time = 7d;
+let avmodetable = DeviceTvmSecureConfigurationAssessment
+| where ConfigurationId == "scid-2010" and isnotempty(Context)
+| extend avdata = parsejson(Context)
+| extend AVMode = case(
+    tostring(avdata[0][0]) == "0", "Active",
+    tostring(avdata[0][0]) == "1", "Passive",
+    tostring(avdata[0][0]) == "4", "EDR Blocked",
+    "Unknown")
+| project DeviceId, AVMode;
+let sense = DeviceTvmSoftwareInventory
+| where SoftwareName startswith "defender_for_"
+| project DeviceId, MsSenseVersion = SoftwareVersion;
+let deviceInfo = DeviceInfo
+| where Timestamp > ago(Time)
+| summarize arg_max(Timestamp, *) by DeviceId;
+let configurationIDs = dynamic([
+        "scid-2000", 
+        "scid-2001", 
+        "scid-5001", 
+        "scid-6001", 
+        "scid-2002", 
+        "scid-5002", 
+        "scid-6002", 
+        "scid-2003", 
+        "scid-5092", 
+        "scid-2010", 
+        "scid-2011", 
+        "scid-5095", 
+        "scid-6095", 
+        "scid-2012", 
+        "scid-5090", 
+        "scid-6090", 
+        "scid-91",
+        "scid-2013", 
+        "scid-5091", 
+        "scid-6091", 
+        "scid-2014", 
+        "scid-2016", 
+        "scid-5094", 
+        "scid-6094",
+        "scid-96",
+        "scid-2030"
+    ]);
+let EDRHealth = DeviceTvmSecureConfigurationAssessment
+| where Timestamp > ago(Time)
+| where ConfigurationId in (configurationIDs)
+| extend Test = case(
+    ConfigurationId == "scid-2000", "SensorEnabled",
+    ConfigurationId == "scid-2001", "SensorDataCollectionWin", //windows
+    ConfigurationId == "scid-5001", "SensorDataCollectionMac", //macOS
+    ConfigurationId == "scid-6001", "SensorDataCollectionLin", //linux
+    ConfigurationId == "scid-2002", "ImpairedCommunicationsWin", //windows
+    ConfigurationId == "scid-5002", "ImpairedCommunicationsMac", //macOS
+    ConfigurationId == "scid-6002", "ImpairedCommunicationsLin", //linux
+    ConfigurationId == "scid-2003", "TamperProtectionWin", //windows
+    ConfigurationId == "scid-5092", "TamperProtectionMac", //macOS
+    ConfigurationId == "scid-2010", "AntivirusEnabled",
+    ConfigurationId == "scid-2011", "AntivirusSignatureVersionWin", //windows
+    ConfigurationId == "scid-5095", "AntivirusSignatureVersionMac", //macOS
+    ConfigurationId == "scid-6095", "AntivirusSignatureVersionLin", //linux
+    ConfigurationId == "scid-2012", "RealtimeProtectionWin", //windows
+    ConfigurationId == "scid-5090", "RealtimeProtectionMac", //macOS
+    ConfigurationId == "scid-6090", "RealtimeProtectionLin", //linux
+    ConfigurationId == "scid-91"  , "BehaviorMonitoring",
+    ConfigurationId == "scid-2013", "PUAProtectionWin", // windows
+    ConfigurationId == "scid-5091", "PUAProtectionMac", //macOS
+    ConfigurationId == "scid-6091", "PUAProtectionLin", //linux
+    ConfigurationId == "scid-2014", "AntivirusReporting",
+    ConfigurationId == "scid-2016", "CloudProtectionWin", //windows
+    ConfigurationId == "scid-5094", "CloudProtectionMac", //macOS
+    ConfigurationId == "scid-6094", "CloudProtectionLin", //linux
+    ConfigurationId == "scid-96"  , "NetworkProtection", //only windows10,11,server2019+
+    ConfigurationId == "scid-2030", "MsSenseVersionStatus", //Server2012R2/2016, macOS, Linux
+    "N/A"),
+    Result = case(IsApplicable == 0, "N/A", IsCompliant == 1, "GOOD", "BAD")
+| extend packed = pack(Test, Result)
+| summarize Tests = make_bag(packed), DeviceName = any(DeviceName) by DeviceId, OSPlatform
+| evaluate bag_unpack(Tests)
+| extend CloudProtection = case(
+    OSPlatform startswith "Windows", CloudProtectionWin,
+    OSPlatform has "macOS",   CloudProtectionMac,
+    OSPlatform has "Linux",   CloudProtectionLin,
+    "NULL")
+| extend PUAProtection = case(
+    OSPlatform startswith "Windows", PUAProtectionWin,
+    OSPlatform has "macOS",   PUAProtectionMac,
+    OSPlatform has "Linux",   PUAProtectionLin,
+    "NULL")
+| extend TamperProtection = case(
+    OSPlatform startswith "Windows", TamperProtectionWin,
+    OSPlatform has "macOS",   TamperProtectionMac,
+    //OSPlatform has "Linux",   TamperProtectionLin,
+    "NULL")
+| extend SensorDataCollection = case(
+    OSPlatform startswith "Windows", SensorDataCollectionWin,
+    OSPlatform has "macOS",   SensorDataCollectionMac,
+    OSPlatform has "Linux",   SensorDataCollectionLin,
+    "NULL")
+| extend ImpairedCommunications = case(
+    OSPlatform startswith "Windows", ImpairedCommunicationsWin,
+    OSPlatform has "macOS",   ImpairedCommunicationsMac,
+    OSPlatform has "Linux",   ImpairedCommunicationsLin,
+    "NULL")
+| extend RealtimeProtection = case(
+    OSPlatform startswith "Windows", RealtimeProtectionWin,
+    OSPlatform has "macOS",   RealtimeProtectionMac,
+    OSPlatform has "Linux",   RealtimeProtectionLin,
+    "NULL")
+| extend AntivirusSignatureVersion = case(
+    OSPlatform startswith "Windows", AntivirusSignatureVersionWin,
+    OSPlatform has "macOS",   AntivirusSignatureVersionMac,
+    OSPlatform has "Linux",   AntivirusSignatureVersionLin,
+    "NULL")
+| project-away *Win, *Mac, *Lin;
+DeviceTvmSecureConfigurationAssessment
+| where Timestamp > ago(Time)
+| where ConfigurationId in ("scid-6095", "scid-5095", "scid-2011") and IsApplicable == "1"
+| extend avdata = parsejson(Context)
+| extend AVSigVersion = tostring(avdata[0][0])
+| extend AVEngineVersion = tostring(avdata[0][1])
+| extend AVSigLastUpdateTime = todatetime(avdata[0][2])
+| extend AVProductVersion = tostring(avdata[0][3])
+| join kind=inner (deviceInfo) on DeviceId
+| where OnboardingStatus == "Onboarded"
+| project LastSeen = Timestamp1, DeviceId, DeviceName, DeviceType, RegistryDeviceTag, OSPlatform, 
+          OSDistribution = iff(OSPlatform != OSDistribution, OSDistribution, ""), OSVersionInfo, 
+          OSBuild, OSArchitecture, MDAVSignatureVersion = AVSigVersion, MDAVEngineVersion = AVEngineVersion, 
+          MDAVPlatformVersion = AVProductVersion, MDAVSignLastUpdate = AVSigLastUpdateTime, JoinType
+| join kind=inner (avmodetable) on DeviceId
+| join kind=inner (sense) on DeviceId
+| project-away DeviceId1, DeviceId2
+| join kind=inner EDRHealth on DeviceId
+| project-away DeviceId1, DeviceName1, OSPlatform1
