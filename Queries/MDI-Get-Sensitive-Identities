@@ -1,7 +1,7 @@
 //name: Get sensitive identities
+//updated: 2023-9-22
 //description:
 //This query will find all identities that were tagged as sensitive by MDI/M365D.
-
 IdentityInfo
 | where Tags == "[\"Sensitive\"]"
 | project AccountUpn, OnPremSid, AccountDisplayName, AccountName, AccountDomain, DistinguishedName, IsAccountEnabled, CreatedDateTime, SourceProvider, ChangeSource, AssignedRoles
