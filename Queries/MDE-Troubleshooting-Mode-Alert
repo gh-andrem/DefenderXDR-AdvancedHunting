@@ -1,8 +1,8 @@
 //name: Defender for Endpoint (MDE) - Troubleshooting Mode Alert
+//updated: 2023-11-29
 //description:
 //This query will display events when troubleshooting mode was enabled through the Defender portal.
 //You can create an incident/alert via a custom detection rule.
-
 DeviceEvents
 | where ActionType == "AntivirusTroubleshootModeEvent"
 | extend ParsedFields=parse_json(AdditionalFields)
