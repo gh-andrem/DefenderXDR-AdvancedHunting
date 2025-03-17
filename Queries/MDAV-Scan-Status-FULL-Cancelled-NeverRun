@@ -1,4 +1,5 @@
 //name: Defender for Antivirus (MDAV) Scan Status - None/Cancelled Full Scans
+//updated: 2024-12-9
 //description:
 //This query will return a report of all devices that were seen within the last day and where a full scan has never been run or was cancelled.
 //Use line 9 to filter by device platform, e.g. Windows clients, Windows servers, macOS, ...
