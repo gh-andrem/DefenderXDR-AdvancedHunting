@@ -1,5 +1,5 @@
 //name: Attack Surface Reduction Report (Audit/Block)
-//version: 0.3 (2025-2-14)
+//updated: 2025-2-14
 //description:
 //This query will provide a report with all blocked or audited Attack Surface Reduction rules. It also returns the OSPlatform column from the DeviceInfo table.
 //To find all ASR rules that triggered in block mode replace "Audited" for "Blocked" in the line 31 below. Choose 30d timeframe.
@@ -7,7 +7,6 @@
 //Comment line 43 to show all ASR events.
 //Uncomment line 44 to summarize ASR events by device, filename, process.
 //This query can also be used to create a custom detection rule to create an informational alert when a specific ASR rule was triggered.
-
 let AsrMatrix = datatable(RuleDescription:string, AsrRuleId:string)
 [
 "Block abuse of exploited vulnerable signed drivers","56a863a9-875e-4185-98a7-b882c64b5ce5",
