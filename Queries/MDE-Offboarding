@@ -1,7 +1,7 @@
 //name: Defender for Endpoint (MDE) - Offboarding
+//updated: 2024-10-24
 //description:
 //This query will check if the the OnboardingInfo registry key was deleted - and therefore the device offboarded.
-
 DeviceRegistryEvents
 | where ActionType == "RegistryValueDeleted"
 | where PreviousRegistryKey == @"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Advanced Threat Protection"
