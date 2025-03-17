@@ -1,9 +1,9 @@
 //name: Defender for Antivirus (MDAV) Detection Overview
+//updated: 2024-3-13
 //description:
 //This query will provide a report with devices and their antivirus detections, e.g. when a file was moved into quarantine locally.
 //Uncomment line 11 to search for blocked potentially unwanted apps, or line 12 to find files that are being blocked because of an EDR detection
 //or custom block indicator (EUS:Win32/CustomEnterpriseBlock!cl).
-
 DeviceEvents
 | where ActionType == "AntivirusDetection"
 | extend x = parse_json(AdditionalFields)
