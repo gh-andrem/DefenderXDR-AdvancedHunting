@@ -1,4 +1,5 @@
 //name: Defender for Antivirus (MDAV) Scan Status - Overview
+//updated: 2024-7-5
 //description:
 //This query will provide a report with devices and their antivirus scan status, e.g. a full scan was completed or cancelled.
 //This query can also be used to create a custom detection rule to create an informational alert when a manually triggered quick or full scan was completed.
@@ -7,7 +8,6 @@
 //NETWORK SERVICE – The scan was a scheduled scan, e.g. GPO, Intune
 //SYSTEM - The scan was triggered manually via the cloud, e.g. Defender XDR, Intune
 //USER – The scan was triggered or cancelled locally by that specific user
-
 DeviceEvents
 //| where DeviceName contains "ENTER DEVICE NAME HERE"
 | where ActionType has_any ("AntivirusScan", "AntivirusScanCompleted", "AntivirusScanCancelled")
