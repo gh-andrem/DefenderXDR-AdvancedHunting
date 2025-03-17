@@ -1,4 +1,5 @@
 //name: User Access Administrator Elevation
+//updated: 2024-3-25
 //description:
 //This query returns entries when a global administrator checked the box in Entra ID (Properties > Access management for Azure resources > Yes) to see all
 //Azure subscriptions and management groups in the tenant.
@@ -12,7 +13,6 @@
 //Count only unique target files and folders
 //Action type equals `ElevateAccess Microsoft.Authorization`
 //App equals `Microsoft Azure, Microsoft Intune`
-
 CloudAppEvents
 | where ApplicationId == '12260' and Application == 'Microsoft Azure'
 | where ActionType has 'ElevateAccess Microsoft.Authorization'
