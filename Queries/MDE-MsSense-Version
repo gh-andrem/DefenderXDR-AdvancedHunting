@@ -1,11 +1,11 @@
 //name: Defender for Endpoint - MsSense EDR Version
+//updated: 2024-9-9
 //description:
 // This query displays devices with an MsSense version older than build 10.8750 (which is currently the most recent version).
 // Uncomment line 11 and 18 to your needs, e.g. to discover certain device categories (server vs client).
 // Check https://learn.microsoft.com/en-us/defender-endpoint/windows-whatsnew for the most recent MsSense version (Server 2012R2 and 2016 only).
 // For Server 2012R2/2016 you can manually update to the most recent version via KB5005292 - https://www.catalog.update.microsoft.com/Search.aspx?q=KB5005292
 // Edited query from source: https://www.reddit.com/r/DefenderATP/comments/1chox0z/how_do_you_verify_versions_of_mde_sense_agent/
-
 DeviceTvmSoftwareInventory
 | where SoftwareName == "defender_for_endpoint"
 //| where OSPlatform !startswith "Windows1"
