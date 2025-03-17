@@ -1,4 +1,4 @@
-# Defender XDR Advanced Hunting Queries
+# Defender XDR Advanced Hunting Queries (KQL)
 
 ## Overview of available queries
 - MDE Attack Surface Reduction Rules Report
