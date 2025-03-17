@@ -1,8 +1,8 @@
 //name: MDE - Find devices and file/registry paths with vulnerable components
+//updated: 2024-12-11
 //description:
 //Useful to find file and registry paths of vulnerable components, e.g. PHP. Enter the name of the software in line 7.
 //Use this as a custom detection in Defender XDR to get alerted automatically, e.g. once a day.
-
 DeviceTvmSoftwareEvidenceBeta
 | where SoftwareName contains "NAME OF APPLICATION"
 | join (DeviceInfo | summarize arg_max(Timestamp, *) by DeviceId | project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform) on DeviceId
