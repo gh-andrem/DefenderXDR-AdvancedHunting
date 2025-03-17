@@ -1,10 +1,10 @@
 //name: Defender XDR - Unified SOC Activation
+//updated: 2024-10-25
 //description:
 //This query will find all events where the Microsoft Sentinel Contributor role was assigned. This role will be assigned to two service principals
 //(Enterprise Applications) in Entra Id: Microsoft Threat Protection and WindowsDefenderATP.
 //Uncomment line 22 which will join the SigninLogs table to hopefully retrieve the display name of the service principal instead of just the service
 //principal Id.
-
 AzureActivity
 | where CategoryValue =~ "Administrative" and
     OperationNameValue =~ "Microsoft.Authorization/roleAssignments/write" and
