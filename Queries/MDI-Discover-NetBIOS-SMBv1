@@ -1,0 +1,9 @@
+//name: MDI - Discover NetBIOS usage (and SMBv1)
+//updated: 2025-4-10
+//description:
+//This query will find all devices that are trying to communicate via ports 137-139.
+DeviceNetworkEvents
+| where ActionType != "NetworkSignatureInspected"
+| where LocalPort in ("137", "138", "139")
+//| project Timestamp, LocalPort, Protocol, DeviceName, RemoteIP
+| summarize by ActionType, LocalPort, DeviceName, RemoteIP
