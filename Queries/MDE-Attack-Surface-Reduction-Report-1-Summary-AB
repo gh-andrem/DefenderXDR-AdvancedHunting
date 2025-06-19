@@ -1,4 +1,4 @@
-//name: Attack Surface Reduction Summary AB (Audit/Block)
+//name: Attack Surface Reduction Report #1 - Summary AB (Audit/Block)
 //updated: 2025-6-19
 //description:
 //This query will provide a report with all blocked or audited Attack Surface Reduction rules.
