@@ -1,5 +1,5 @@
-//name: Attack Surface Reduction Status Report
-//updated: 2025-6-18
+//name: Attack Surface Reduction Summary AB (Audit/Block)
+//updated: 2025-6-19
 //description:
 //This query will provide a report with all blocked or audited Attack Surface Reduction rules.
 //It queries the vulnerability management table to assess the ASR status.
