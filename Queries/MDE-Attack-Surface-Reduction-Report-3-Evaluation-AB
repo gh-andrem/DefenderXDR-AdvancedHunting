@@ -2,10 +2,11 @@
 //updated: 2025-6-19
 //description:
 //This query will provide a report of a specific ASR rule's audited (or blocked) events.
+//Please be aware that the results in Advanced Hunting are limited to 30000 results. Exporting to CSV is limited to 10000 results.
 //
 let TimeFrame = 30d;
 //
-// Enter ASR rule ID in next line to only review the events of this rule.
+//Enter the ASR rule ID  to only review the events of this rule.
 let AsrRuleAudit = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2";
 //
 //Enter "Workstation" to filter for Windows Client OS devices or "Server" for Windows Server OS
