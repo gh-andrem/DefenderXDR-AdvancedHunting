@@ -2,7 +2,8 @@
 //updated: 2025-6-19
 //description:
 //This query will provide a count of all audited (or blocked) Attack Surface Reduction rules.
-//The timeframe is set to 30 days but can be changed in line 39.
+//
+let TimeFrame = 30d;
 //
 //Enter "Workstation" to filter for Windows Client OS devices or "Server" for Windows Server OS
 let OSCategory = "Workstation";
@@ -36,7 +37,7 @@ let AsrMatrix = datatable(RuleDescription:string, AsrRuleId:string)
 let DeviceInfoData = DeviceInfo
 | distinct DeviceId, OSPlatform, DeviceType;
 let AsrEvents = DeviceEvents
-| where Timestamp > ago(30d)
+| where Timestamp > ago(TimeFrame)
 | where ActionType startswith "Asr" and ActionType endswith AsrType
 | extend AsrRuleId = tolower(tostring(parsejson(AdditionalFields).RuleId))
 | where not(InitiatingProcessFolderPath has_any ("msiexec.exe", "svchost.exe"))
