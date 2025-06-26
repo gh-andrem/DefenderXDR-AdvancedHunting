@@ -8,8 +8,8 @@
 let Time = 7d;
 DeviceInfo
 | where Timestamp > ago(Time)
-| where OnboardingStatus == 'Onboarded'
 | where isnotempty(OSPlatform)
+| where OnboardingStatus == 'Onboarded'
 | summarize arg_max(Timestamp, *) by DeviceName
 | where OSPlatform startswith "Windows"
 | project DeviceId, DeviceName, OSPlatform
