@@ -1,4 +1,4 @@
-#name: MDAV Platform Update Status
+#name: MDE Sense Version Status
 #updated: 7/24/2025
 #description:
 #This script returns unique results when the SENSE service started (event ID 1). This most likely happened after a reboot or when the version updated.
