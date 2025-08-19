@@ -9,12 +9,18 @@
 | Microsoft Defender for Mobile TVM | e724aa31-0f56-4018-b8be-f8cb82ca1196 | Microsoft Defender for Mobile TVM (Threat and Vulnerability Management) is the service, which provides the vulnerability assessment for the installed apps on the iOS devices | https://learn.microsoft.com/en-us/defender-endpoint/mobile-resources-defender-endpoint#microsoft-defender-mobile-app-exclusion-from-conditional-access-ca-policies |
 
 ---
-
-API POST request to create service principal. Use [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
+# API request to create service principal
+- Use [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
 
 ```
 POST https://graph.microsoft.com/v1.0/servicePrincipals
 {
   "appId": "X-Y-Z-A"
 }
+```
+---
+# API request to get service principal with specific servicePrincipalName
+
+```
+https://graph.microsoft.com/v1.0/servicePrincipals?$filter=servicePrincipalNames/any(p:p eq 'https://portal.windowsazure.com/')
 ```
