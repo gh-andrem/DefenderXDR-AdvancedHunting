@@ -13,6 +13,6 @@ DeviceEvents
 | where ActionType has_any ('ControlledFolderAccessViolationAudited', 'ControlledFolderAccessViolationBlocked')
 | join kind=inner (DeviceInfo | distinct DeviceId, DeviceType, OSPlatform) on DeviceId
 | where DeviceType contains OSCategory
-//| project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, ActionType, FileTriggered = strcat(FolderPath, "\\" , FileName), ProcessCommandLine, InitiatingProcessSHA1, InitiatingProcess = InitiatingProcessFolderPath
+| project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, ActionType, FileTriggered = strcat(FolderPath, "\\" , FileName), ProcessCommandLine, InitiatingProcessSHA1, InitiatingProcess = InitiatingProcessFolderPath
 | summarize count() by DeviceName, ActionType, FileTriggered, InitiatingProcess
 | sort by count_ desc
