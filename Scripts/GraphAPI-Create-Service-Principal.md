@@ -8,6 +8,7 @@
 | Microsoft Intune Enrollment       | d4ebce55-015a-49b5-a083-c84d1797ae8c |                                                                                                                            | https://learn.microsoft.com/en-us/intune/intune-service/enrollment/multi-factor-authentication#configure-intune-to-require-multifactor-authentication-at-device-enrollment |
 | MicrosoftDefenderATP XPlat        | a0e84e36-b067-4d5c-ab4a-3db38e598ae2 | MicrosoftDefenderATP XPlat app is the application responsible for forwarding Defender risk signals to the Defender backend | https://learn.microsoft.com/en-us/defender-endpoint/mobile-resources-defender-endpoint#microsoft-defender-mobile-app-exclusion-from-conditional-access-ca-policies         |
 | Microsoft Defender for Mobile TVM | e724aa31-0f56-4018-b8be-f8cb82ca1196 | Microsoft Defender for Mobile TVM (Threat and Vulnerability Management) is the service, which provides the vulnerability assessment for the installed apps on the iOS devices | https://learn.microsoft.com/en-us/defender-endpoint/mobile-resources-defender-endpoint#microsoft-defender-mobile-app-exclusion-from-conditional-access-ca-policies |
+| Microsoft Defender MAM            | c2b688fe-48c0-464b-a89c-67041aa8fcb2 | Exclude this app from CA if you're having issues with the Defender app logging in automatically on mobile phones  | |
 
 ---
 # API request to create service principal
