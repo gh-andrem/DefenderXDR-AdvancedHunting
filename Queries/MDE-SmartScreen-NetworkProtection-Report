@@ -9,7 +9,7 @@
 //CasbPolicy - Blocked by unsanctioned app through MDCA
 //Other values (e.g. malicious, phishing, untrusted, ...) - Blocked natively by SmartScreen/network protection
 DeviceEvents
-| where ActionType has_any ("SmartScreenAppWarning", "SmartScreenUrlWarning", "ExploitGuardNetworkProtectionBlocked", "SmartScreenUserOverride")
+| where ActionType has_any ("SmartScreenAppWarning", "SmartScreenUrlWarning", "ExploitGuardNetworkProtectionBlocked", "SmartScreenUserOverride", "ExploitGuardNetworkProtectionAudited")
 | extend ParsedFields=parse_json(AdditionalFields)
 | extend BlockedBy = case(
     isempty(ParsedFields.Experience), ParsedFields.ResponseCategory,
