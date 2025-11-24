@@ -1,8 +1,8 @@
 //name: Controlled Folder Access Report
-//updated: 2025-7-1
+//updated: 2025-11-24
 //description:
 //This query will provide a report with all Controlled Folder Access actions that were audited or blocked. It also returns the OSPlatform column from the DeviceInfo table.
-//This query can also be used to create a custom detection rule that creatse an informational alert when a Controlled Folder Access action was triggered.
+//This query can also be used to create a custom detection rule that create an informational alert when a Controlled Folder Access action was triggered.
 //
 let TimeFrame = 30d;
 //
