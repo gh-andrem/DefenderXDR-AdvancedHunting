@@ -1,17 +1,22 @@
 //name: Attack Surface Reduction Report #1 - Summary Audit/Block Status
-//updated: 2025-6-19
+//updated: 2025-11-26
 //description:
 //This query will provide a report with all blocked or audited Attack Surface Reduction rules.
 //It queries the vulnerability management table to assess the ASR status.
 //MDE Plan 2 (or separate vulnerability management) licenses will be needed!
 //Source: https://github.com/alexverboon/Hunting-Queries-Detection-Rules/blob/main/Defender%20For%20Endpoint/MDE-ASR%20State.md
-let Time = 7d;
+//
+let TimeFrame = 7d;
+//
+//Enter "1" to filter for Windows 10/11 devices, "Server" for Windows Server OS or leave empty ("") to show all Windows devices.
+let OSCategory = "";
+//
 DeviceInfo
-| where Timestamp > ago(Time)
+| where Timestamp > ago(TimeFrame)
 | where isnotempty(OSPlatform)
 | where OnboardingStatus == 'Onboarded'
 | summarize arg_max(Timestamp, *) by DeviceName
-| where OSPlatform startswith "Windows"
+| where OSPlatform startswith strcat("Windows", OSCategory)
 | project DeviceId, DeviceName, OSPlatform
 | join kind=leftouter (
     DeviceTvmInfoGathering
