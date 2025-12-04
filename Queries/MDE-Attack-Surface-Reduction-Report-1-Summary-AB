@@ -1,8 +1,8 @@
 //name: Attack Surface Reduction Report #1 - Summary Audit/Block Status
-//updated: 2025-11-26
+//updated: 2025-12-4
 //description:
 //This query will provide a report with all blocked or audited Attack Surface Reduction rules.
-//It queries the vulnerability management table to assess the ASR status.
+//It queries the vulnerability management table to assess the ASR status. Use the search field to find all devices where rules are "Off".
 //MDE Plan 2 (or separate vulnerability management) licenses will be needed!
 //Source: https://github.com/alexverboon/Hunting-Queries-Detection-Rules/blob/main/Defender%20For%20Endpoint/MDE-ASR%20State.md
 //
