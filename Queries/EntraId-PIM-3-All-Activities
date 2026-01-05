@@ -1,0 +1,119 @@
+//name: Entra ID - PIM - Activities (Additions, Removals)
+//updated: 2026-1-5
+//description:
+//This query returns all sign-in logs where a user was added or removed from an Entra ID role or group through PIM (combination of queries EntraId-PIM-1-Assignments-Additions and EntraId-PIM-2-Removals-Deactivations).
+let AddActions = dynamic([
+  "Add eligible member to role in PIM completed (permanent)", // ELIGIBLE, permanent
+  "Add eligible member to role in PIM completed (timebound)", // ELIGIBLE, timebound
+  "Add member to role in PIM completed (permanent)",          // ACTIVE, permanent
+  "Add member to role in PIM completed (timebound)"           // ACTIVE, timebound
+]);
+let RemoveActions = dynamic([
+  "Remove member from role in PIM completed (permanent)",
+  "Remove member from role in PIM completed (timebound)",
+  "Remove member from role (PIM activation expired)",
+  "Remove member from role completed (PIM deactivate)"
+]);
+//
+// ----------- ADD ACTIONS -----------
+let BaseAdd =
+AuditLogs
+| where LoggedByService == "PIM"
+| where OperationName in (AddActions)
+| extend d = todynamic(TargetResources)
+| extend ActivityOriginal = ActivityDisplayName
+| extend CleanActivity = case(
+    ActivityDisplayName == "Add eligible member to role in PIM completed (permanent)", "Eligible role (permanent) was added",
+    ActivityDisplayName == "Add eligible member to role in PIM completed (timebound)", "Eligible role (timebound) was added",
+    ActivityDisplayName == "Add member to role in PIM completed (permanent)",          "Active role (permanent) was added",
+    ActivityDisplayName == "Add member to role in PIM completed (timebound)",          "Active role (timebound) was added",
+    ActivityDisplayName
+)
+| project TimeGenerated, CorrelationId, ActivityOriginal, CleanActivity, d, InitiatedBy, ResultDescription;
+let ExtractedAdd =
+BaseAdd
+| mv-apply tr = d on (
+    where isnotempty(tostring(tr.displayName)) or isnotempty(tostring(tr.userPrincipalName))
+    | project ItemType = tostring(tr.type),
+              ItemName = tostring(tr.displayName),
+              UPN      = tostring(tr.userPrincipalName)
+)
+| summarize
+    RoleNames    = make_list_if(ItemName, ItemType == "Role"),
+    GroupNames   = make_list_if(ItemName, ItemType == "Other"),
+    SubjectUPNs  = make_list_if(UPN, isnotempty(UPN))
+by CorrelationId;
+let FinalAdd =
+BaseAdd
+| lookup kind=leftouter ExtractedAdd on CorrelationId
+| extend ActionCategory     = "Add",
+         RoleName           = iff(array_length(RoleNames)   > 0, tostring(RoleNames[0]), ""),
+         GroupName          = iff(array_length(GroupNames)  > 0, tostring(GroupNames[0]), "n/a"),
+         SubjectUPN         = iff(array_length(SubjectUPNs) > 0, tostring(SubjectUPNs[0]), ""),
+         InitiatedByUPN     = tostring(InitiatedBy.user.userPrincipalName),
+         InitiatedById      = tostring(InitiatedBy.user.id),
+         InitiatedByDisplay = tostring(InitiatedBy.user.displayName)
+| project
+    TimeGenerated,
+    Action           = CleanActivity,
+    ActionCategory,
+    RoleName,
+    GroupName,
+    SubjectUPN,
+    InitiatedByUPN,
+    InitiatedByDisplay,
+    ResultDescription,
+    CorrelationId;
+//
+// ----------- REMOVE ACTIONS -----------
+let BaseRemove =
+AuditLogs
+| where LoggedByService == "PIM"
+| where OperationName in (RemoveActions)
+| extend d = todynamic(TargetResources)
+| extend ActivityOriginal = ActivityDisplayName
+| extend CleanActivity = case(
+    ActivityDisplayName == "Remove member from role in PIM completed (permanent)", "Role (permanent) was removed",
+    ActivityDisplayName == "Remove member from role in PIM completed (timebound)", "Role (timebound) was removed",
+    ActivityDisplayName == "Remove member from role (PIM activation expired)",     "Assignment expired automatically",
+    ActivityDisplayName == "Remove member from role completed (PIM deactivate)",   "User deactivated role before assignment expired",
+    ActivityDisplayName
+)
+| project TimeGenerated, CorrelationId, ActivityOriginal, CleanActivity, d, InitiatedBy, ResultDescription;
+let ExtractedRemove =
+BaseRemove
+| mv-apply tr = d on (
+    where isnotempty(tostring(tr.displayName)) or isnotempty(tostring(tr.userPrincipalName))
+    | project ItemType = tostring(tr.type),
+              ItemName = tostring(tr.displayName),
+              UPN      = tostring(tr.userPrincipalName)
+)
+| summarize
+    RoleNames    = make_list_if(ItemName, ItemType == "Role"),
+    GroupNames   = make_list_if(ItemName, ItemType == "Other"),
+    SubjectUPNs  = make_list_if(UPN, isnotempty(UPN))
+by CorrelationId;
+let FinalRemove =
+BaseRemove
+| lookup kind=leftouter ExtractedRemove on CorrelationId
+| extend ActionCategory     = "Remove",
+         RoleName           = iff(array_length(RoleNames)   > 0, tostring(RoleNames[0]), ""),
+         GroupName          = iff(array_length(GroupNames)  > 0, tostring(GroupNames[0]), "n/a"),
+         SubjectUPN         = iff(array_length(SubjectUPNs) > 0, tostring(SubjectUPNs[0]), ""),
+         InitiatedByUPN     = tostring(InitiatedBy.user.userPrincipalName),
+         InitiatedById      = tostring(InitiatedBy.user.id),
+         InitiatedByDisplay = tostring(InitiatedBy.user.displayName)
+| project
+    TimeGenerated,
+    Action           = CleanActivity,
+    ActionCategory,
+    RoleName,
+    GroupName,
+    SubjectUPN,
+    InitiatedByUPN,
+    InitiatedByDisplay,
+    ResultDescription,
+    CorrelationId;
+// ----------- UNION & SORT -----------
+union FinalAdd, FinalRemove
+| sort by TimeGenerated desc
