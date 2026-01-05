@@ -1,0 +1,35 @@
+//name: Entra ID - PIM - Activations
+//updated: 2026-1-5
+//description:
+//This query returns all sign-in logs where a user activated or requested an Entra ID role or group through PIM.
+let PIMActions = dynamic([
+  "Add member to role approval requested (PIM activation)",
+  "Add member to role request approved (PIM activation)",
+  "Add member to role request denied (PIM activation)",
+  "Add member to role completed (PIM activation)"
+]);
+AuditLogs
+| where LoggedByService == "PIM"
+| where OperationName in (PIMActions)
+| extend d = todynamic(TargetResources)
+| extend ActivityOriginal = ActivityDisplayName
+| extend CleanActivity = case(
+    ActivityDisplayName == "Add member to role approval requested (PIM activation)", "User requested role/group to be approved",
+    ActivityDisplayName == "Add member to role request approved (PIM activation)",   "Request - Approved",
+    ActivityDisplayName == "Add member to role request denied (PIM activation)",     "Request - Denied",
+    ActivityDisplayName == "Add member to role completed (PIM activation)",          "Eligible role/group was assigned (with or without approver)",
+    ActivityDisplayName
+)
+| project
+    TimeGenerated,
+    Activity = CleanActivity,
+    RoleAssigned   = tostring(d[0].displayName), // "Member" when using PIM for groups
+    RoleGroup      = iff(tostring(d[0].displayName) == "Member", tostring(d[4].displayName), "n/a"), // Entra group name when applicable
+    RoleAssignedTo = iff(ActivityOriginal != "Add member to role request approved (PIM activation)",
+                         strcat(tostring(d[2].displayName), " | ", tostring(d[2].userPrincipalName)),
+                         "Approver Request"),
+    RoleApprover   = iff(ActivityOriginal == "Add member to role request approved (PIM activation)",
+                                                 strcat(tostring(d[2].displayName), " | ", tostring(d[2].userPrincipalName)),
+                         ""),
+    Justification  = ResultDescription
+| sort by TimeGenerated desc
