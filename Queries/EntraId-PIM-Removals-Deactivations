@@ -1,0 +1,46 @@
+//name: Entra ID - PIM - Removals/Deactivations
+//updated: 2026-1-5
+//description:
+//This query returns all sign-in logs where a user was removed from an Entra ID role or group through PIM (when assignment expired, user deactivated role before assignment expired, through an administrator).
+let PIMActions = dynamic([
+  "Remove member from role in PIM completed (permanent)",
+  "Remove member from role in PIM completed (timebound)",
+  "Remove member from role (PIM activation expired)",
+  "Remove member from role completed (PIM deactivate)"
+]);
+let Base = AuditLogs
+| where LoggedByService == "PIM"
+| where OperationName in (PIMActions)
+| extend d = todynamic(TargetResources)
+| extend ActivityOriginal = ActivityDisplayName
+| extend CleanActivity = case(
+    ActivityDisplayName == "Remove member from role in PIM completed (permanent)", "Role (permanent) was removed",
+    ActivityDisplayName == "Remove member from role in PIM completed (timebound)", "Role (timebound) was removed",
+    ActivityDisplayName == "Remove member from role (PIM activation expired)",     "Assignment expired automatically",
+    ActivityDisplayName == "Remove member from role completed (PIM deactivate)",   "User deactivated role before assignment expired",
+    ActivityDisplayName
+)
+| project TimeGenerated, CorrelationId, ActivityOriginal, CleanActivity, d, InitiatedBy, ResultDescription;
+let Extracted =
+Base
+| mv-apply tr = d on (
+    where isnotempty(tostring(tr.displayName))
+    | project ItemType = tostring(tr.type), ItemName = tostring(tr.displayName)
+)
+| summarize
+    RoleNames  = make_list_if(ItemName, ItemType == "Role"),
+    GroupNames = make_list_if(ItemName, ItemType == "Other")
+by CorrelationId;
+Base
+| lookup kind=leftouter Extracted on CorrelationId
+| extend RoleRemoved      = iff(array_length(RoleNames)  > 0, tostring(RoleNames[0]), ""),
+         RoleGroupRemoved = iff(array_length(GroupNames) > 0, tostring(GroupNames[0]), "n/a"),   // group name when PIM-for-groups; "n/a" for directory roles
+         RoleRemovedBy    = tostring(InitiatedBy.user.displayName)
+| project
+    TimeGenerated,
+    Activity = CleanActivity,
+    RoleRemoved,
+    RoleGroupRemoved,
+    RoleRemovedFrom = iff(isnotnull(d[2].userPrincipalName), tostring(d[2].userPrincipalName), tostring(d[3].userPrincipalName)),
+    RoleRemovedBy
+| sort by TimeGenerated desc
