@@ -1,0 +1,25 @@
+//name: Entra ID - PIM - Assignments/Additions
+//updated: 2026-1-5
+//description:
+//This query returns all sign-in logs where a user was added (assigned) to an Entra ID role or group through PIM.
+let PIMActions = dynamic([
+  "Add eligible member to role in PIM completed (permanent)", // User was assigned to Entra ID role or PIM group (permanent - never expires) - ELIGIBLE
+  "Add eligible member to role in PIM completed (timebound)", // User was assigned to Entra ID role or PIM group (timebound) - ELIGIBLE
+  "Add member to role in PIM completed (permanent)",          // User was assigned to Entra ID role or PIM group (pepermanent - never expires) - ACTIVE
+  "Add member to role in PIM completed (timebound)"           // User was assigned to Entra ID role or PIM group (timebound) - ACTIVE
+]);
+AuditLogs
+| where LoggedByService == "PIM"
+| where OperationName in (PIMActions)
+| extend d = todynamic(TargetResources)
+| project
+    TimeGenerated,
+    Activity = ActivityDisplayName,
+    RoleAssigned = d[0].displayName, // Member = Member of group
+    RoleGroup = iff(d[0].displayName == "Member", d[3].displayName, "n/a"), // Name of Entra ID group if PIM for groups is used
+    RoleAssignedTo = d[2].displayName,
+    RoleAssignedToUPN = d[2].userPrincipalName,
+    ReasonForAddingUser = ResultDescription,
+    RoleAssignedByUser = InitiatedBy.user.userPrincipalName,
+    RoleAssignedByUserID = InitiatedBy.user.id
+| sort by TimeGenerated desc
