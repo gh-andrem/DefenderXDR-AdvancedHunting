@@ -24,5 +24,5 @@ POST https://graph.microsoft.com/v1.0/servicePrincipals
 # API request to get service principal with specific servicePrincipalName
 
 ```
-https://graph.microsoft.com/v1.0/servicePrincipals?$filter=servicePrincipalNames/any(p:p eq 'https://portal.windowsazure.com/')
+GET https://graph.microsoft.com/v1.0/servicePrincipals?$filter=servicePrincipalNames/any(p:p eq 'https://portal.windowsazure.com/')
 ```
