@@ -1,5 +1,5 @@
 //name: Device Control Events
-//updated: 2023-5-26
+//updated: 2026-1-22
 //description:
 //This query will provide a report with all actions that were triggered by Device Control policies.
 //RemovableStoragePolicyTriggered: event triggered by Disk and file system level enforcement
@@ -18,5 +18,5 @@ DeviceEvents
 | extend MediaProductId = tostring(parsed.ProductId)
 | extend MediaVendorId = tostring(parsed.VendorId)
 | extend MediaSerialNumber = tostring(parsed.SerialNumber)
-|project Timestamp, DeviceId, DeviceName, InitiatingProcessAccountName, ActionType, RemovableStorageAccess, RemovableStoragePolicyVerdict, MediaBusType, MediaClassGuid, MediaClassName, MediaDeviceId, MediaInstanceId, MediaName, RemovableStoragePolicy, MediaProductId, MediaVendorId, MediaSerialNumber, FolderPath, FileSize
+| project Timestamp, DeviceId, DeviceName, InitiatingProcessAccountName, ActionType, RemovableStorageAccess, RemovableStoragePolicyVerdict, MediaBusType, MediaClassGuid, MediaClassName, MediaDeviceId, MediaInstanceId, MediaName, RemovableStoragePolicy, MediaProductId, MediaVendorId, MediaSerialNumber, FolderPath, FileSize
 | order by Timestamp desc
