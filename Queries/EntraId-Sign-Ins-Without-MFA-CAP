@@ -1,15 +1,15 @@
 //name: Entra ID - All sign-ins without conditional access policy or MFA
-//updated: 2026-4-17
+//updated: 2026-4-20
 //description:
 //Use this query in Advanced Hunting.
 //This query returns all sign-ins where neither MFA was required nor conditional access policies were applied.
-// Uncomment last line to get a count of all applications
+//Uncomment last line to get a count of all applications by user.
 EntraIdSignInEvents
 | where Timestamp > ago(30d)
 | where IsGuestUser == 0 // Filter out logins of users who are also guests in other tenants
-//| where DeviceTrustType != "Hybrid Azure AD joined" // Filter for Hybrid Joined devices if CA is using this as grant condition
+| where DeviceTrustType != "Hybrid Azure AD joined" // Filter for Hybrid Joined devices if CA is using this as grant condition
 | where AuthenticationRequirement != "multiFactorAuthentication"
-| where ConditionalAccessStatus == "2" // 2 = Conditional access policy not applied
+| where ConditionalAccessStatus in ("0","2") // 0 or 2 = Conditional access policy not applied
 | where ErrorCode == "0" // Auth codes = https://learn.microsoft.com/en-us/entra/identity-platform/reference-error-codes
 | where LogonType != '["nonInteractiveUser"]' // Only interactive logons ... see https://learn.microsoft.com/en-us/windows/win32/secauthn/noninteractive-authentication
 | where not(Application has_any ("Windows Sign In", "Microsoft Authentication Broker", "APP3")) // Add more applications that can be excluded
@@ -38,4 +38,4 @@ EntraIdSignInEvents
     ApplicationId,
     CorrelationId
 | sort by Timestamp desc
-//| summarize count() by Application
+//| summarize count() by AccountDisplayName, Application
