@@ -1,5 +1,5 @@
 //name: Device Discovery Report
-//updated: 2024-7-4
+//updated: 2026-06-10
 //description:
 //This query will provide a report with all devices that can be onboarded to MDE and that were discovered in the environment by the
 //device discovery feature of MDE. 
@@ -12,5 +12,5 @@ DeviceInfo
 //| where isnotempty(ConnectedNetworks)
 | extend NetworkName = todynamic(ConnectedNetworks)[0].Name
 //| where NetworkName contains "ENTER YOUR NETWORK NAME"
-| project Timestamp, ReportId, DeviceId, DeviceName, OSPlatform, MacAddress, IPAddresses, NetworkName
+| project Timestamp, ReportId, DeviceId, DeviceName, OnboardingStatus, OSPlatform, MacAddress, IPAddresses, NetworkName
 | sort by Timestamp desc
