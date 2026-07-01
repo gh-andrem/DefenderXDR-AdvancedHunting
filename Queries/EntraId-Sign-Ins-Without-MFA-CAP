@@ -9,7 +9,7 @@ EntraIdSignInEvents
 | where IsGuestUser == 0 // Filter out logins of users who are also guests in other tenants
 | where DeviceTrustType != "Hybrid Azure AD joined" // Filter for Hybrid Joined devices if CA is using this as grant condition
 | where AuthenticationRequirement != "multiFactorAuthentication"
-| where ConditionalAccessStatus in ("0","2") // 0 or 2 = Conditional access policy not applied
+| where ConditionalAccessStatus in ("0","2") // 0 = Policy applied or 2 = Ppolicy was not applied
 | where ErrorCode == "0" // Auth codes = https://learn.microsoft.com/en-us/entra/identity-platform/reference-error-codes
 | where LogonType != '["nonInteractiveUser"]' // Only interactive logons ... see https://learn.microsoft.com/en-us/windows/win32/secauthn/noninteractive-authentication
 | where not(Application has_any ("Windows Sign In", "Microsoft Authentication Broker", "APP3")) // Add more applications that can be excluded
