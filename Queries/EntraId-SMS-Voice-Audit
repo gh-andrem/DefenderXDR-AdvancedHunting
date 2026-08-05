@@ -1,0 +1,31 @@
+//name: Entra ID - SMS and Voice Authentication Method Audit
+//updated: 2026-8-5
+//description:
+//This query returns the UPNs of all users that have used a legacy authentication method (SMS, voice) to sign-in or use SSPR features (reset passwort, unlock account) in the last 180 days.
+//Query needs to be refined further as not all voice authentication methods might have been captured by it, e.g. office phone!
+union
+(
+    SigninLogs
+    | where TimeGenerated > ago(180d)
+    | where ResultType == 0
+    | where AuthenticationRequirement == "multiFactorAuthentication"
+    | where tostring(MfaDetail.authMethod) in ("Text message", "Phone call approval (Authentication phone)", "Phone call approval (Alternate phone)", "Phone call approval (Office phone)")
+    | project UserPrincipalName
+),
+(
+    AuditLogs
+    | where TimeGenerated > ago(180d)
+    | where Result == "success"
+    | where OperationName in (
+        "Reset password (self-service)",
+        "Unlock user account (self-service)"
+    )
+    | extend UserPrincipalName = tostring(InitiatedBy.user.userPrincipalName)
+    | mv-expand Detail = AdditionalDetails
+    | where tostring(Detail.key) == "MethodsUsedForValidation"
+    | where tostring(Detail.value) has_any ("Mobile phone SMS", "Mobile phone call")
+    | project UserPrincipalName
+)
+| where isnotempty(UserPrincipalName)
+| distinct UserPrincipalName
+| sort by UserPrincipalName asc
