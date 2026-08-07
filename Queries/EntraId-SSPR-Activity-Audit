@@ -1,0 +1,28 @@
+//name: Entra ID - SSPR Activity Audit
+//updated: 2026-8-7
+//description:
+//This query returns all successful SSPR activities (reset password, unlock account). It can be used to audit the tenant for legacy authentication usage (voice, SMS).
+//Uncomment line 18 if you want to filter the MFA method for legacy authentication methods (voice, SMS).
+//Remove empty line 26 to summarize the results by UPN and MFA method.
+//Query needs to be refined further as not all voice authentication methods might have been captured by it, e.g. office phone!
+AuditLogs
+| where TimeGenerated > ago(180d)
+| where OperationName in (
+    "Reset password (self-service)",
+    "Unlock user account (self-service)"
+)
+| where Result == "success"
+| extend UserPrincipalName = tostring(InitiatedBy.user.userPrincipalName)
+| mv-expand Detail = AdditionalDetails
+| where tostring(Detail.key) == "MethodsUsedForValidation"
+| extend MFAMethod = tostring(Detail.value)
+//| where MFAMethod has_any ("Mobile phone SMS", "Mobile phone call")
+| project
+    TimeGenerated,
+    UserPrincipalName,
+    OperationName,
+    MFAMethod
+| order by TimeGenerated desc
+
+| summarize count() by UserPrincipalName, MFAMethod
+| sort by count_ desc 
