@@ -1,0 +1,17 @@
+//name: Entra ID - SMS and Voice Legacy Authentication Sign In Audit
+//updated: 2026-8-7
+//description:
+//This query returns all successful sign-ins where legacy authentication methods were being used (voice, SMS).).
+//Remove empty line 15 to summarize the results by UPN and MFA method.
+//Query needs to be refined further as not all voice authentication methods might have been captured by it, e.g. office phone!
+SigninLogs
+| where TimeGenerated > ago(180d)
+| where ResultType == 0
+| where AuthenticationRequirement == "multiFactorAuthentication"
+| extend MFAMethod = tostring(MfaDetail.authMethod)
+| where isnotempty(MFAMethod) 
+| where MFAMethod in ("Text message", "Phone call approval (Authentication phone)", "Phone call approval (Alternate phone)", "Phone call approval (Office phone)")
+| project MFAMethod, UserPrincipalName, TimeGenerated
+
+| summarize count() by UserPrincipalName, MFAMethod
+| sort by count_ desc 
