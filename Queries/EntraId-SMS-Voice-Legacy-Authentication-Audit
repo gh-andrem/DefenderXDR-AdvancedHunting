@@ -1,4 +1,4 @@
-//name: Entra ID - SMS and Voice Authentication Method Audit
+//name: Entra ID - SMS and Voice Legacy Authentication Method Audit
 //updated: 2026-8-5
 //description:
 //This query returns the UPNs of all users that have used a legacy authentication method (SMS, voice) to sign-in or use SSPR features (reset passwort, unlock account) in the last 180 days.
