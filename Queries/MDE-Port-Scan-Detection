@@ -1,0 +1,25 @@
+//name: Defender for Endpoint (MDE) - Port Scan Detection
+//updated: 2026-08-19
+//description:
+//Usually, MDE will detect and alert automatically when a device is scanning ports (e.g. horizontal port scan). It will not alert if a device/app is scanning rather slowly, e.g. every 5 or 10 min.
+//This query detects potential port scans. It aggregates connection attempts to ports below 10000 (port 1-9999) per device and remote (public) IP, then filters for devices that contacted at least 50 distinct ports on the same external IP.
+//Results are sorted by distinct port count descending, including the port list, attempt count, and first/last seen timestamps.
+//Lines 8 through 11 can be adjusted to your needs.
+let startDate = datetime(2026-08-05);
+let endDate = datetime(2026-08-08);
+let portThreshold = 50;    // Increase for more results but also more noise
+let portNumbers = 10000;   // Scans ports 1-10000, increase or decrease as needed
+DeviceNetworkEvents
+| where Timestamp between (startofday(startDate) .. endofday(endDate))
+| where ActionType in ("ConnectionAttempt","ConnectionSuccess","ConnectionFailed")
+| where isnotempty(RemoteIP)
+| where RemoteIPType == "Public"
+| where RemotePort < portNumbers
+| summarize DistinctPorts = dcount(RemotePort),
+    Ports = make_set(RemotePort, 200),
+    Attempts = count(),
+    FirstSeen = min(Timestamp),
+    LastSeen  = max(Timestamp)
+  by DeviceId, DeviceName, RemoteIP
+| where DistinctPorts >= portThreshold
+| sort by DistinctPorts desc
