@@ -1,6 +1,7 @@
 # Defender XDR Advanced Hunting Queries (KQL)
 
 ## Overview of available queries
+- Entra ID Sign-in and Audit Log Analysis, e.g. PIM evaluation, SMS/Voice Authentication Method Retirement Audit
 - MDE Attack Surface Reduction Rules Report
 - MDE Controlled Folder Access Report
 - MDE Device Control Events
