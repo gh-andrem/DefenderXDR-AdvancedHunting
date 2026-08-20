@@ -23,3 +23,9 @@ DeviceNetworkEvents
   by DeviceId, DeviceName, RemoteIP
 | where DistinctPorts >= portThreshold
 | sort by DistinctPorts desc
+
+//Once you have found a suspicious device you can use the following query to look further into its network events, processes, files, etc
+DeviceNetworkEvents
+| where DeviceName == "DEVICE NAME"
+| where RemoteIP == "Remote IP"
+| summarize count() by InitiatingProcessFileName
